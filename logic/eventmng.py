@@ -9,10 +9,11 @@ events_schema = EventProjSchema(many=True)
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
+# ADD
 def add(req):
     name = req.form['name']
     if EventProj.query.filter_by(name=name).first():
-        return jsonify(message="Event name is already taken."), 404
+        return jsonify(message="Event name is already taken."), 401
     else:
         desc = req.form['desc']
         publicity = req.form['publicity']
@@ -32,6 +33,7 @@ def add(req):
         return jsonify(message="Event created successfully"), 201
 
 
+# returns a single event by ID
 def get_one(event_id: str):
     event = EventProj.query.filter_by(event_ID=event_id).first()
     if event:
@@ -41,6 +43,7 @@ def get_one(event_id: str):
         return jsonify(message="Event not found"), 404
 
 
+# returns a list of filtered events
 def get_many(req):
     name = req.args.get('name')
     state = req.args.get('state')
@@ -60,12 +63,14 @@ def get_many(req):
         return jsonify(Message="No employees found"), 404
 
 
+# returns all the events
 def get_all():
     event_list = EventProj.query.all()
     result = events_schema.dump(event_list)
     return jsonify(result), 200
 
 
+# UPDATE
 def update(req):
     event_id = int(req.form['event_id'])
     event = EventProj.query.filter_by(event_ID=event_id).first()
@@ -84,6 +89,7 @@ def update(req):
         return jsonify(Message="Event not found"), 404
 
 
+# DELETE
 def delete(event_id: int):
     event = EventProj.query.filter_by(event_ID=event_id).first()
     if event:

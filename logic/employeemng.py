@@ -10,6 +10,7 @@ employees_schema = EmployeeSchema(many=True)
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
+# ADD
 def add(req):
     username = req.form['username']
     if Employee.query.filter_by(username=username).first():
@@ -27,6 +28,8 @@ def add(req):
         return jsonify(message="User created successfully"), 201
 
 
+# javítandó
+# returns success message and access token for authorization
 def login(req):
     if req.is_json:
         username = req.json['username']
@@ -43,6 +46,7 @@ def login(req):
         return jsonify(message="Invalid login data"), 401
 
 
+# returns a single employee by ID
 def get_one(emp_id: str):
     employee = Employee.query.filter_by(emp_ID=emp_id).first()
     if employee:
@@ -52,6 +56,7 @@ def get_one(emp_id: str):
         return jsonify(message="Employee not found"), 404
 
 
+# returns a list of filtered employees
 def get_many(req):
     username = req.args.get('username')
     firstname = req.args.get('firstname')
@@ -66,12 +71,14 @@ def get_many(req):
         return jsonify(Message="No employees found"), 404
 
 
+# returns all the employees
 def get_all():
     user_list = Employee.query.all()
     result = employees_schema.dump(user_list)
     return jsonify(result), 200
 
 
+# UPDATE
 def update(req):
     emp_id = int(req.form['emp_id'])
     employee = Employee.query.filter_by(emp_ID=emp_id).first()
@@ -95,6 +102,7 @@ def update(req):
         return jsonify(Message="Employee not found"), 404
 
 
+# DELETE
 def delete(emp_id: int):
     employee = Employee.query.filter_by(emp_ID=emp_id).first()
     if employee:
