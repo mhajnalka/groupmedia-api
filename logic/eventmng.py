@@ -98,3 +98,5 @@ def delete(event_id: int):
         return jsonify(Message="Event deleted"), 202
     else:
         return jsonify(Message="Event not found"), 404
+
+# A role-okat is itt kellene valahol létrehozni
