@@ -11,6 +11,11 @@ def api_test():
     return jsonify(message="TEST RESPONSE"), 200
 
 
+# #################################################################
+# EMPLOYEE REQUESTS
+# #################################################################
+
+
 @routes_blueprint.route('/add_employee', methods=['POST'])
 # @jwt_required()
 def add_employee():
@@ -22,14 +27,12 @@ def login():
     return employeemng.login(request)
 
 
-# get a single employee's data
 @routes_blueprint.route('/get_employee/<string:emp_id>', methods=['GET'])
 # @jwt_required()
 def get_employee(emp_id: str):
     return employeemng.get_one(emp_id)
 
 
-# get multiple employees' data
 @routes_blueprint.route('/get_employees', methods=['GET'])
 # @jwt_required()
 def get_employees():
@@ -52,3 +55,13 @@ def update_employee():
 # @jwt_required()
 def delete_employee(emp_id: int):
     return employeemng.delete(emp_id)
+
+
+# #################################################################
+# EVENT REQUESTS
+# #################################################################
+
+
+# #################################################################
+# ITEM REQUESTS
+# #################################################################
