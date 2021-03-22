@@ -20,7 +20,7 @@ class Employee(db.Model):
     lastlogin = Column(Date)
 
 
-class WorkItem(db.Model):
+class ItemVersion(db.Model):
     __tablename__ = 'workitem'
     item_ID = Column(Integer, primary_key=True)
     emp_ID = Column(Integer)
@@ -32,7 +32,7 @@ class WorkItem(db.Model):
     creadate = Column(Date)
 
 
-class WorkItemInfo(db.Model):
+class ItemMain(db.Model):
     __tablename__ = 'workiteminfo'
     workiteminfo_ID = Column(Integer, primary_key=True)
     name = Column(String, unique=True)

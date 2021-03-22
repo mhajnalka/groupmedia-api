@@ -1,11 +1,11 @@
 from flask import jsonify
-from schemas import WorkItemSchema
+from schemas import ItemMainSchema
 from models import *
 from app import db
-from flask_jwt_extended import create_access_token
 from sqlalchemy import or_
 
-item_schema = WorkItemSchema()
-items_schema = WorkItemSchema(many=True)
+iteminfo_schema = ItemMainSchema()
+iteminfos_schema = ItemMainSchema(many=True)
 
+# ADD + DELETE:
 # cross-reference should be handled here

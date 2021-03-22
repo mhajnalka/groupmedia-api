@@ -2,7 +2,6 @@ from flask import jsonify
 from schemas import EventProjSchema
 from models import EventProj
 from app import db
-from flask_jwt_extended import create_access_token
 from sqlalchemy import or_
 
 event_schema = EventProjSchema()

@@ -9,13 +9,13 @@ class EmployeeSchema(ma.Schema):
                   'fax', 'address', 'city', 'region', 'postcode', 'country', 'lastlogin')
 
 
-class WorkItemSchema(ma.Schema):
+class ItemVersionSchema(ma.Schema):
     class Meta:
         fields = ('item_ID', 'emp_ID', 'workiteminfo_ID', 'filename', 'version', 'lockstate',
                   'islastver', 'creadate')
 
 
-class WorkItemInfoSchema(ma.Schema):
+class ItemMainSchema(ma.Schema):
     class Meta:
         fields = ('workiteminfo_ID', 'name', 'desc', 'extension', 'type')
 
