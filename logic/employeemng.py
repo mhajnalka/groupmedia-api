@@ -1,6 +1,6 @@
 from flask import jsonify
 from schemas import EmployeeSchema
-from models import *
+from models import Employee
 from app import db
 from flask_jwt_extended import create_access_token
 from sqlalchemy import or_
@@ -96,7 +96,7 @@ def update(req):
 
 
 def delete(emp_id: int):
-    employee = Employee.query.filter_by(emp_ID=emp_id).first
+    employee = Employee.query.filter_by(emp_ID=emp_id).first()
     if employee:
         db.session.delete(employee)
         db.session.commit()
