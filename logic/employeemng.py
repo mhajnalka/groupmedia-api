@@ -12,13 +12,13 @@ employees_schema = EmployeeSchema(many=True)
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
 # ADD
 def add(req):
-    username = req.form['username']
+    username = req.json['username']
     if Employee.query.filter_by(username=username).first():
         return jsonify(message="Username is already taken."), 404
     else:
-        password = req.form['password']
-        firstname = req.form['firstname']
-        lastname = req.form['lastname']
+        password = req.json['password']
+        firstname = req.json['firstname']
+        lastname = req.json['lastname']
         employee = Employee(username=username,
                             password=password,
                             firstname=firstname,
@@ -31,12 +31,8 @@ def add(req):
 # javítandó
 # returns success message and access token for authorization
 def login(req):
-    if req.is_json:
-        username = req.json['username']
-        password = req.json['password']
-    else:
-        username = req.form['username']
-        password = req.form['password']
+    username = req.json['username']
+    password = req.json['password']
 
     if Employee.query.filter_by(username=username, password=password).first():
         # match found, sending jwt token for logging in
@@ -80,22 +76,22 @@ def get_all():
 
 # UPDATE
 def update(req):
-    emp_id = int(req.form['emp_id'])
+    emp_id = int(req.json['emp_id'])
     employee = Employee.query.filter_by(emp_ID=emp_id).first()
     if employee:
         # ide kell egy rakat ellenőrzés
-        employee.username = req.form['username']
-        employee.password = req.form['password']
-        employee.firstname = req.form['firstname']
-        employee.lastname = req.form['lastname']
-        employee.email = req.form['email']
-        employee.phone = req.form['phone']
-        employee.fax = req.form['fax']
-        employee.address = req.form['address']
-        employee.city = req.form['city']
-        employee.region = req.form['region']
-        employee.postcode = req.form['postcode']
-        employee.country = req.form['country']
+        employee.username = req.json['username']
+        employee.password = req.json['password']
+        employee.firstname = req.json['firstname']
+        employee.lastname = req.json['lastname']
+        employee.email = req.json['email']
+        employee.phone = req.json['phone']
+        employee.fax = req.json['fax']
+        employee.address = req.json['address']
+        employee.city = req.json['city']
+        employee.region = req.json['region']
+        employee.postcode = req.json['postcode']
+        employee.country = req.json['country']
         db.session.commit()
         return jsonify(Message="Employee update successful"), 202
     else:

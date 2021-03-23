@@ -11,16 +11,16 @@ events_schema = EventProjSchema(many=True)
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
 # ADD
 def add(req):
-    name = req.form['name']
+    name = req.json['name']
     if EventProj.query.filter_by(name=name).first():
         return jsonify(message="Event name is already taken."), 401
     else:
-        desc = req.form['desc']
-        publicity = req.form['publicity']
-        state = req.form['state']
-        responsible_id = req.form['responsible_ID']
-        deputy_id = req.form['deputy_ID']
-        due_date = req.form['duedate']
+        desc = req.json['desc']
+        publicity = req.json['publicity']
+        state = req.json['state']
+        responsible_id = req.json['responsible_ID']
+        deputy_id = req.json['deputy_ID']
+        due_date = req.json['duedate']
         new_event = EventProj(name=name,
                               desc=desc,
                               publicity=publicity,
@@ -72,17 +72,17 @@ def get_all():
 
 # UPDATE
 def update(req):
-    event_id = int(req.form['event_id'])
+    event_id = int(req.json['event_id'])
     event = EventProj.query.filter_by(event_ID=event_id).first()
     if event:
         # ide kell egy rakat ellenőrzés
-        event.name = req.form['name']
-        event.desc = req.form['desc']
-        event.publicity = req.form['publicity']
-        event.state = req.form['state']
-        event.responsible_ID = req.form['responsible_ID']
-        event.deputy_ID = req.form['deputy_ID']
-        event.duedate = req.form['duedate']
+        event.name = req.json['name']
+        event.desc = req.json['desc']
+        event.publicity = req.json['publicity']
+        event.state = req.json['state']
+        event.responsible_ID = req.json['responsible_ID']
+        event.deputy_ID = req.json['deputy_ID']
+        event.duedate = req.json['duedate']
         db.session.commit()
         return jsonify(Message="Event update successful"), 202
     else:
