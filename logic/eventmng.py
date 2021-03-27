@@ -80,8 +80,8 @@ def update(req):
         event.desc = req.json['desc']
         event.publicity = req.json['publicity']
         event.state = req.json['state']
-        event.responsible_ID = req.json['responsible_ID']
-        event.deputy_ID = req.json['deputy_ID']
+        event.responsible_id = req.json['responsible_ID']
+        event.deputy_id = req.json['deputy_ID']
         event.duedate = req.json['duedate']
         db.session.commit()
         return jsonify(Message="Event update successful"), 202
