@@ -28,7 +28,7 @@ class ItemVersionSchema(ma.Schema):
 
 class EmployeeSchema(ma.Schema):
     emp_id = fields.Integer()
-    username = fields.String(validate=validate.Length(min=5, max=25))
+    username = fields.String(validate=validate.Length(max=25))
     password = fields.String()
     firstname = fields.String(validate=validate.Length(max=50))
     lastname = fields.String(validate=validate.Length(max=50))
@@ -40,7 +40,7 @@ class EmployeeSchema(ma.Schema):
     region = fields.String(validate=validate.Length(max=50))
     postcode = fields.String(validate=validate.Length(equal=4))
     country = fields.String(validate=validate.Length(max=50))
-    lastlogin = fields.Date()
+    lastlogin = fields.Date('YYYY-MM-dd')
 
     @validates('password')
     def validate_pw(self, pw):
@@ -48,11 +48,11 @@ class EmployeeSchema(ma.Schema):
             raise ValidationError("Password cannot be less than 5")
         elif len(pw) > 25:
             raise ValidationError("Password cannot be bigger than 25")
-        elif not pw.islower() and not pw.isupper():
+        elif not any(c for c in pw if c.islower()) and not any(c for c in pw if c.isUpper()):
             raise ValidationError("Password must contain lower and upper case letters as well")
-        elif re.match("^[A-Za-z0-9_-]*$", pw):
+        elif not re.match("^[A-Za-z0-9_-]*$", pw):
             raise ValidationError("Password cannot contain any special characters")
-        elif not pw.any().isdigit() or not pw.any().isletter():
+        elif not any(c.isdigit() for c in pw) and not any(c.isletter() for c in pw):
             raise ValidationError("Password must contain numbers and digits as well")
 
 
