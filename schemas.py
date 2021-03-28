@@ -4,28 +4,6 @@ import re
 
 ma = Marshmallow()
 
-"""
-class EmployeeSchema(ma.Schema):
-    class Meta:
-        fields = ('emp_ID', 'username', 'password', 'firstname', 'lastname', 'email', 'phone',
-                  'fax', 'address', 'city', 'region', 'postcode', 'country', 'lastlogin')
-
-
-
-def validate_length(length, param_name, max_length, min_length):
-    if length > max_length:
-        raise ValidationError(f"{param_name} cannot be bigger than {max_length}")
-    elif length < min_length:
-        raise ValidationError(f"{param_name} cannot be less than {min_length}")
-        
-
-class ItemVersionSchema(ma.Schema):
-    class Meta:
-        fields = ('item_ID', 'emp_ID', 'workiteminfo_ID', 'filename', 'version', 'lockstate',
-                  'islastver', 'creadate')
-"""
-
-
 class EmployeeSchema(ma.Schema):
     emp_id = fields.Integer()
     username = fields.String(validate=validate.Length(max=25))
@@ -40,7 +18,7 @@ class EmployeeSchema(ma.Schema):
     region = fields.String(validate=validate.Length(max=50))
     postcode = fields.String(validate=validate.Length(equal=4))
     country = fields.String(validate=validate.Length(max=50))
-    lastlogin = fields.Date('YYYY-MM-dd')
+    lastlogin = fields.Date('%Y-%m-%d')
 
     @validates('password')
     def validate_pw(self, pw):
@@ -62,7 +40,7 @@ class ItemVersionSchema(ma.Schema):
     version = fields.String(validate=validate.Length(max=50))
     lockstate = fields.Boolean()
     islastver = fields.Boolean()
-    creadate = fields.Date()
+    creadate = fields.Date('%Y-%m-%d')
     itemmain_id = fields.Integer()
     creator_id = fields.Integer()
     project_id = fields.Integer()
@@ -94,30 +72,6 @@ class EventProjSchema(ma.Schema):
     desc = fields.String(validate=validate.Length(max=255))
     publicity = fields.Boolean()
     state = fields.String(validate=validate.Length(max=10))
-    duedate = fields.Date()
+    duedate = fields.Date('%Y-%m-%d')
     responsible_id = fields.Integer()
     deputy_id = fields.Integer()
-
-
-"""
-
-class ItemMainSchema(ma.Schema):
-    class Meta:
-        fields = ('workiteminfo_ID', 'name', 'desc', 'extension', 'type')
-
-
-class RoleSchema(ma.Schema):
-    class Meta:
-        fields = ('role_ID', 'event_ID', 'emp_ID', 'perm_ID')
-
-
-class PermissionSchema(ma.Schema):
-    class Meta:
-        fields = ('perm_ID', 'name')
-
-
-class EventProjSchema(ma.Schema):
-    class Meta:
-        fields = ('event_ID', 'name', 'desc', 'publicity', 'state', 'responsible_ID',
-                  'deputy_ID', 'duedate')
-"""
