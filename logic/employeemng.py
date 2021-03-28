@@ -1,4 +1,7 @@
+from datetime import datetime
 from flask import jsonify
+from marshmallow import ValidationError
+from logic.helper import fill_data, value_chk
 from schemas import EmployeeSchema
 from models import Employee
 from app import db
@@ -9,22 +12,32 @@ employee_schema = EmployeeSchema()
 employees_schema = EmployeeSchema(many=True)
 
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
 # ADD
 def add(req):
     username = req.json['username']
     if Employee.query.filter_by(username=username).first():
         return jsonify(message="Username is already taken."), 404
     else:
-        password = req.json['password']
-        firstname = req.json['firstname']
-        lastname = req.json['lastname']
-        employee = Employee(username=username,
-                            password=password,
-                            firstname=firstname,
-                            lastname=lastname)
-        db.session.add(employee)
-        db.session.commit()
+        request_data = fill_data(classname=Employee, json=req.json)
+        request_data['lastlogin'] = datetime.date.today()
+        err_str = value_chk(request_data, {'emp_id': 'identifier',
+                                           'username': 'username',
+                                           'password': 'password',
+                                           'firsname': 'first name',
+                                           'lastname': 'last name',
+                                           'email': 'e-mail'
+        })
+        try:
+            employee = employee_schema.load(request_data)  # load validates the input
+            if err_str:
+                raise ValueError(err_str)
+            db.session.add(employee)
+            db.session.commit()
+        except (TypeError, ValidationError) as err:
+            return jsonify(message=list(eval(str(err)).values())[0][0]), 401
+        except ValueError as err:
+            return jsonify(message=err), 401
+
         return jsonify(message="User created successfully"), 201
 
 
@@ -44,7 +57,7 @@ def login(req):
 
 # returns a single employee by ID
 def get_one(emp_id: str):
-    employee = Employee.query.filter_by(emp_ID=emp_id).first()
+    employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
         result = employee_schema.dump(employee)
         return jsonify(result)
@@ -75,24 +88,30 @@ def get_all():
 
 
 # UPDATE
+# ELŐSZÖR VALIDÁLUNK, HA A LOAD OK, AKKOR MEHET TOVÁBB
 def update(req):
     emp_id = int(req.json['emp_id'])
-    employee = Employee.query.filter_by(emp_ID=emp_id).first()
+    employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
-        # ide kell egy rakat ellenőrzés
-        employee.username = req.json['username']
-        employee.password = req.json['password']
-        employee.firstname = req.json['firstname']
-        employee.lastname = req.json['lastname']
-        employee.email = req.json['email']
-        employee.phone = req.json['phone']
-        employee.fax = req.json['fax']
-        employee.address = req.json['address']
-        employee.city = req.json['city']
-        employee.region = req.json['region']
-        employee.postcode = req.json['postcode']
-        employee.country = req.json['country']
-        db.session.commit()
+        request_data = dict()
+        request_data['emp_id'] = req.json['emp_id']
+        request_data['username'] = req.json['username']
+        request_data['password'] = req.json['password']
+        request_data['firstname'] = req.json['firstname']
+        request_data['lastname'] = req.json['lastname']
+        request_data['email'] = req.json['email']
+        request_data['phone'] = req.json['phone']
+        request_data['fax'] = req.json['fax']
+        request_data['address'] = req.json['address']
+        request_data['city'] = req.json['city']
+        request_data['region'] = req.json['region']
+        request_data['postcode'] = req.json['postcode']
+        request_data['country'] = req.json['country']
+        try:
+            employee = employee_schema.load(request_data)  # load validates the input
+            db.session.commit()
+        except ValidationError as err:
+            return jsonify(Message=err), 401
         return jsonify(Message="Employee update successful"), 202
     else:
         return jsonify(Message="Employee not found"), 404
@@ -100,7 +119,7 @@ def update(req):
 
 # DELETE
 def delete(emp_id: int):
-    employee = Employee.query.filter_by(emp_ID=emp_id).first()
+    employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
         db.session.delete(employee)
         db.session.commit()
