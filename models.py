@@ -18,9 +18,8 @@ class Employee(db.Model):
     postcode = Column(db.String(4))
     country = Column(db.String(50))
     lastlogin = Column(db.Date)
-    itemversions = db.relationship('ItemVersion', backref='creator')
-    responsibleof = db.relationship('EventProj', backref='responsible')
-    deputyof = db.relationship('EventProj', backref='deputy')
+    ref_itemversions = db.relationship('ItemVersion', backref='creator')
+    ref_responsibleof = db.relationship('EventProj', backref='responsible')
     roles = db.relationship('Role', backref='emp')
 
 
@@ -38,17 +37,18 @@ class ItemVersion(db.Model):
 
 
 class ItemMain(db.Model):
-    __tablename__ = 'workiteminfo'
+    __tablename__ = 'itemmain'
     itemmain_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(25), unique=True)
     desc = Column(db.String(255))
     extension = Column(db.String(4))
     type = Column(db.String(4))
-    versions = db.relationship('ItemVersion', backref='itemmain')
+    ref_versions = db.relationship('ItemVersion', backref='itemmain')
 
 
 class Role(db.Model):  # N:
-    role_ID = Column(db.Integer, primary_key=True)
+    __tablename__ = 'role'
+    role_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(25), unique=True)
     event_id = db.Column(db.Integer, db.ForeignKey('eventproj.event_id'))
     emp_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
@@ -56,18 +56,14 @@ class Role(db.Model):  # N:
 
 
 class Permission(db.Model):
+    __tablename__ = 'permission'
     perm_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(25), unique=True)
-    roles = db.relationship('Role', backref='perm')
-
-
-class ItemOfEvent(db.Model):
-    ioe_id = Column(db.Integer, primary_key=True)
-    event_id = Column(db.Integer)
-    item_id = Column(db.Integer)
+    ref_roles = db.relationship('Role', backref='perm')
 
 
 class EventProj(db.Model):
+    __tablename__ = 'eventproj'
     event_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(50), unique=True)
     desc = Column(db.String(255))
@@ -75,6 +71,5 @@ class EventProj(db.Model):
     state = Column(db.String(10))
     duedate = Column(db.Date)
     responsible_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
-    deputy_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
-    items = db.relationship('ItemVersion', backref='project')
-    roles = db.relationship('Role', backref='event')
+    ref_items = db.relationship('ItemVersion', backref='project')
+    ref_roles = db.relationship('Role', backref='event')
