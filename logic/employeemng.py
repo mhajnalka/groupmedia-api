@@ -23,7 +23,7 @@ def add(req):
         err_str = value_chk(request_data, {'emp_id': 'identifier',
                                            'username': 'username',
                                            'password': 'password',
-                                           'firsname': 'first name',
+                                           'firstname': 'first name',
                                            'lastname': 'last name',
                                            'email': 'e-mail'
         })
@@ -37,7 +37,6 @@ def add(req):
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:
             return jsonify(message=err), 401
-
         return jsonify(message="User created successfully"), 201
 
 
@@ -88,31 +87,28 @@ def get_all():
 
 
 # UPDATE
-# ELŐSZÖR VALIDÁLUNK, HA A LOAD OK, AKKOR MEHET TOVÁBB
 def update(req):
     emp_id = int(req.json['emp_id'])
     employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
-        request_data = dict()
-        request_data['emp_id'] = req.json['emp_id']
-        request_data['username'] = req.json['username']
-        request_data['password'] = req.json['password']
-        request_data['firstname'] = req.json['firstname']
-        request_data['lastname'] = req.json['lastname']
-        request_data['email'] = req.json['email']
-        request_data['phone'] = req.json['phone']
-        request_data['fax'] = req.json['fax']
-        request_data['address'] = req.json['address']
-        request_data['city'] = req.json['city']
-        request_data['region'] = req.json['region']
-        request_data['postcode'] = req.json['postcode']
-        request_data['country'] = req.json['country']
+        request_data = fill_data(classname=Employee, json=req.json, orig_data=employee)
+        err_str = value_chk(request_data, {'username': 'username',
+                                           'password': 'password',
+                                           'firstname': 'first name',
+                                           'lastname': 'last name',
+                                           'email': 'e-mail'
+        })
+
         try:
             employee = employee_schema.load(request_data)  # load validates the input
+            if err_str:
+                raise ValueError(err_str)
             db.session.commit()
-        except ValidationError as err:
-            return jsonify(Message=err), 401
-        return jsonify(Message="Employee update successful"), 202
+        except (TypeError, ValidationError) as err:
+            return jsonify(message=list(eval(str(err)).values())[0][0]), 401
+        except ValueError as err:
+            return jsonify(message=err), 401
+        return jsonify(message="User updated successfully"), 201
     else:
         return jsonify(Message="Employee not found"), 404
 
@@ -123,6 +119,6 @@ def delete(emp_id: int):
     if employee:
         db.session.delete(employee)
         db.session.commit()
-        return jsonify(Message="Employee deleted"), 202
+        return jsonify(Message="Employee has been deleted"), 202
     else:
         return jsonify(Message="Employee not found"), 404
