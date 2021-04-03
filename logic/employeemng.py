@@ -1,7 +1,5 @@
-from datetime import datetime
 from flask import jsonify
 from marshmallow import ValidationError
-from logic.helper import fill_data, value_chk
 from schemas import EmployeeSchema
 from models import Employee
 from app import db
@@ -14,33 +12,39 @@ employees_schema = EmployeeSchema(many=True)
 
 # ADD
 def add(req):
-    username = req.json['username']
-    if Employee.query.filter_by(username=username).first():
-        return jsonify(message="Username is already taken."), 404
-    else:
-        request_data = fill_data(classname=Employee, json=req.json)
-        request_data['lastlogin'] = datetime.date.today()
-        err_str = value_chk(request_data, {'emp_id': 'identifier',
-                                           'username': 'username',
-                                           'password': 'password',
-                                           'firstname': 'first name',
-                                           'lastname': 'last name',
-                                           'email': 'e-mail'
-        })
+    try:
+        username = req.json['username']
+    except KeyError as err:
+        return jsonify(message="Username cannot be undefined."), 401
+    if not Employee.query.filter_by(username=username).first():
         try:
-            employee = employee_schema.load(request_data)  # load validates the input
-            if err_str:
-                raise ValueError(err_str)
-            db.session.add(employee)
-            db.session.commit()
+            employee = Employee()
+            employee.username = req.json['username'] if 'username' in req.json else ""
+            employee.password = req.json['password'] if 'password' in req.json else ""
+            employee.firstname = req.json['firstname'] if 'firstname' in req.json else ""
+            employee.lastname = req.json['lastname'] if 'lastname' in req.json else ""
+            employee.email = req.json['email'] if 'email' in req.json else ""
+            employee.phone = req.json['phone'] if 'phone' in req.json else ""
+            employee.fax = req.json['fax'] if 'fax' in req.json else ""
+            employee.address = req.json['address'] if 'address' in req.json else ""
+            employee.city = req.json['city'] if 'city' in req.json else ""
+            employee.region = req.json['region'] if 'region' in req.json else ""
+            employee.postcode = req.json['postcode'] if 'postcode' in req.json else ""
+            employee.country = req.json['country'] if 'country' in req.json else ""
+            employee_schema.load(req.json)
+            # db.session.add(employee)
+            # db.session.commit()
         except (TypeError, ValidationError) as err:
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:
             return jsonify(message=err), 401
-        return jsonify(message="User created successfully"), 201
+        except KeyError:
+            return jsonify(message="Missing data"), 401
+        return jsonify(message="Employee created successfully"), 201
+    else:
+        return jsonify(message="Username is already taken."), 404
 
 
-# javítandó
 # returns success message and access token for authorization
 def login(req):
     username = req.json['username']
@@ -88,27 +92,33 @@ def get_all():
 
 # UPDATE
 def update(req):
-    emp_id = int(req.json['emp_id'])
+    try:
+        emp_id = int(req.json['emp_id'])
+    except KeyError as err:
+        return jsonify(message="Username cannot be undefined."), 401
     employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
-        request_data = fill_data(classname=Employee, json=req.json, orig_data=employee)
-        err_str = value_chk(request_data, {'username': 'username',
-                                           'password': 'password',
-                                           'firstname': 'first name',
-                                           'lastname': 'last name',
-                                           'email': 'e-mail'
-        })
-
         try:
-            employee = employee_schema.load(request_data)  # load validates the input
-            if err_str:
-                raise ValueError(err_str)
+            employee.password = req.json['password'] if 'password' in req.json else employee.password
+            employee.firstname = req.json['firstname'] if 'firstname' in req.json else employee.firstname
+            employee.lastname = req.json['lastname'] if 'lastname' in req.json else employee.lastname
+            employee.email = req.json['email'] if 'email' in req.json else employee.email
+            employee.phone = req.json['phone'] if 'phone' in req.json else employee.phone
+            employee.fax = req.json['fax'] if 'fax' in req.json else employee.fax
+            employee.address = req.json['address'] if 'address' in req.json else employee.address
+            employee.city = req.json['city'] if 'city' in req.json else employee.city
+            employee.region = req.json['region'] if 'region' in req.json else employee.region
+            employee.postcode = req.json['postcode'] if 'postcode' in req.json else employee.postcode
+            employee.country = req.json['country'] if 'country' in req.json else employee.country
+            employee_schema.load(req.json)
             db.session.commit()
         except (TypeError, ValidationError) as err:
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:
             return jsonify(message=err), 401
-        return jsonify(message="User updated successfully"), 201
+        except KeyError:
+            return jsonify(message="Missing data"), 401
+        return jsonify(message="Employee has been successfully updated"), 201
     else:
         return jsonify(Message="Employee not found"), 404
 

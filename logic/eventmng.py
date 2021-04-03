@@ -95,7 +95,7 @@ def delete(event_id: int):
     if event:
         db.session.delete(event)
         db.session.commit()
-        return jsonify(Message="Event deleted"), 202
+        return jsonify(Message="Event has beeen deleted"), 202
     else:
         return jsonify(Message="Event not found"), 404
 

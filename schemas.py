@@ -1,8 +1,12 @@
 from flask_marshmallow import Marshmallow
 from marshmallow import fields, ValidationError, validates, validate
 import re
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+
+from models import Employee, ItemVersion, ItemMain, Permission, EventProj, Role
 
 ma = Marshmallow()
+
 
 class EmployeeSchema(ma.Schema):
     emp_id = fields.Integer()
@@ -18,12 +22,11 @@ class EmployeeSchema(ma.Schema):
     region = fields.String(validate=validate.Length(max=50))
     postcode = fields.String(validate=validate.Length(equal=4))
     country = fields.String(validate=validate.Length(max=50))
-    lastlogin = fields.Date('%Y-%m-%d')
 
     @validates('password')
     def validate_pw(self, pw):
         if len(pw) < 5:
-            raise ValidationError("Password cannot be less than 5")
+            raise ValidationError("Password cannot be less than 5 characters")
         elif len(pw) > 25:
             raise ValidationError("Password cannot be bigger than 25")
         elif not any(c for c in pw if c.islower()) and not any(c for c in pw if c.isUpper()):

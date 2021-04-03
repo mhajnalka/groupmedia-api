@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlalchemy import Column
 from app import db
 
@@ -17,10 +19,19 @@ class Employee(db.Model):
     region = Column(db.String(50))
     postcode = Column(db.String(4))
     country = Column(db.String(50))
-    lastlogin = Column(db.Date)
     ref_itemversions = db.relationship('ItemVersion', backref='creator')
     ref_responsibleof = db.relationship('EventProj', backref='responsible')
-    roles = db.relationship('Role', backref='emp')
+    ref_roles = db.relationship('Role', backref='emp')
+
+
+class ItemMain(db.Model):
+    __tablename__ = 'itemmain'
+    itemmain_id = Column(db.Integer, primary_key=True)
+    name = Column(db.String(25), unique=True)
+    desc = Column(db.String(255))
+    extension = Column(db.String(4))
+    type = Column(db.String(4))
+    ref_versions = db.relationship('ItemVersion', backref='itemmain')
 
 
 class ItemVersion(db.Model):
@@ -34,16 +45,6 @@ class ItemVersion(db.Model):
     itemmain_id = db.Column(db.Integer, db.ForeignKey('itemmain.itemmain_id'))
     creator_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
     project_id = db.Column(db.Integer, db.ForeignKey('eventproj.event_id'))
-
-
-class ItemMain(db.Model):
-    __tablename__ = 'itemmain'
-    itemmain_id = Column(db.Integer, primary_key=True)
-    name = Column(db.String(25), unique=True)
-    desc = Column(db.String(255))
-    extension = Column(db.String(4))
-    type = Column(db.String(4))
-    ref_versions = db.relationship('ItemVersion', backref='itemmain')
 
 
 class Role(db.Model):  # N:
