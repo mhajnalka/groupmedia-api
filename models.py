@@ -19,6 +19,7 @@ class Employee(db.Model):
     region = Column(db.String(50))
     postcode = Column(db.String(4))
     country = Column(db.String(50))
+    create = Column(db.Boolean)
     ref_itemversions = db.relationship('ItemVersion', backref='creator')
     ref_responsibleof = db.relationship('EventProj', backref='responsible')
     ref_roles = db.relationship('Role', backref='emp')

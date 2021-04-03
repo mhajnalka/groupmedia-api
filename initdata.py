@@ -26,7 +26,8 @@ test_user = Employee(emp_id=1,
                      city='Budapest',
                      region='Pest megye',
                      postcode='1034',
-                     country='Magyarország'
+                     country='Magyarország',
+                     create=1
                      )
 
 read_permission = Permission(perm_id=1,

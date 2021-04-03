@@ -22,6 +22,7 @@ class EmployeeSchema(ma.Schema):
     region = fields.String(validate=validate.Length(max=50))
     postcode = fields.String(validate=validate.Length(equal=4))
     country = fields.String(validate=validate.Length(max=50))
+    create = fields.Boolean()
 
     @validates('password')
     def validate_pw(self, pw):
@@ -55,6 +56,7 @@ class ItemMainSchema(ma.Schema):
     desc = fields.String(validate=validate.Length(max=255))
     extension = fields.String(validate=validate.Length(max=4))
     type = fields.String(validate=validate.Length(max=4))
+
 
 class RoleSchema(ma.Schema):
     role_id = fields.Integer()
