@@ -74,3 +74,18 @@ class EventProj(db.Model):
     responsible_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
     ref_items = db.relationship('ItemVersion', backref='project')
     ref_roles = db.relationship('Role', backref='event')
+
+
+class Company(db.Model):
+    __tablename__ = 'company'
+    comp_id = Column(db.Integer, primary_key=True)
+    name = Column(db.String(25), unique=True)
+    email = Column(db.String(50))
+    phone = Column(db.String(20))
+    fax = Column(db.String(20))
+    web = Column(db.String(255))
+    address = Column(db.String(50))
+    city = Column(db.String(50))
+    region = Column(db.String(50))
+    postcode = Column(db.String(4))
+    country = Column(db.String(50))
