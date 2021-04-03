@@ -1,3 +1,5 @@
+import datetime
+
 from flask import jsonify
 from marshmallow import ValidationError
 
@@ -29,14 +31,14 @@ def add(req):
             event.desc = req.json['desc'] if 'desc' in req.json else ""
             event.publicity = req.json['publicity'] if 'publicity' in req.json else ""
             event.state = req.json['state'] if 'state' in req.json else ""
-            event.duedate = req.json['duedate'] if 'duedate' in req.json else ""
-            if 'responsible_id' in req.json and employeemng.exists(event.responsible_id):
+            event.duedate = datetime.datetime.strptime(req.json['duedate'], '%d-%m-%Y') if 'duedate' in req.json else ""
+            if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
                 event.responsible_id = req.json['responsible_id']
             else:
                 return jsonify(message="Responsible not found."), 404
             event_schema.load(req.json)
-            # db.session.add(event)
-            # db.session.commit()
+            db.session.add(event)
+            db.session.commit()
         except (TypeError, ValidationError) as err:
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:

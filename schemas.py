@@ -77,5 +77,5 @@ class EventProjSchema(ma.Schema):
     desc = fields.String(validate=validate.Length(max=255))
     publicity = fields.Boolean()
     state = fields.String(validate=validate.Length(max=10))
-    duedate = fields.Date('%Y-%m-%d')
+    duedate = fields.Date('%d-%m-%Y')
     responsible_id = fields.Integer()
