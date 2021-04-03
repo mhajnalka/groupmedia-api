@@ -1,4 +1,7 @@
 from flask import jsonify
+from marshmallow import ValidationError
+
+from logic import employeemng
 from schemas import EventProjSchema
 from models import EventProj
 from app import db
@@ -8,34 +11,46 @@ event_schema = EventProjSchema()
 events_schema = EventProjSchema(many=True)
 
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!ezt majd át kell írni
+# #################################################################
+# FOR EVENT REQUESTS
+# #################################################################
+
+
 # ADD
 def add(req):
-    name = req.json['name']
-    if EventProj.query.filter_by(name=name).first():
-        return jsonify(message="Event name is already taken."), 401
-    else:
-        desc = req.json['desc']
-        publicity = req.json['publicity']
-        state = req.json['state']
-        responsible_id = req.json['responsible_ID']
-        deputy_id = req.json['deputy_ID']
-        due_date = req.json['duedate']
-        new_event = EventProj(name=name,
-                              desc=desc,
-                              publicity=publicity,
-                              state=state,
-                              responsible_ID=responsible_id,
-                              deputy_ID=deputy_id,
-                              duedate=due_date)
-        db.session.add(new_event)
-        db.session.commit()
+    try:
+        name = req.json['name']
+    except KeyError as err:
+        return jsonify(message="Event name cannot be undefined."), 401
+    if not EventProj.query.filter_by(name=name).first():
+        try:
+            event = EventProj()
+            event.name = name
+            event.desc = req.json['desc'] if 'desc' in req.json else ""
+            event.publicity = req.json['publicity'] if 'publicity' in req.json else ""
+            event.state = req.json['state'] if 'state' in req.json else ""
+            event.duedate = req.json['duedate'] if 'duedate' in req.json else ""
+            if 'responsible_id' in req.json and employeemng.exists(event.responsible_id):
+                event.responsible_id = req.json['responsible_id']
+            else:
+                return jsonify(message="Responsible not found."), 404
+            event_schema.load(req.json)
+            # db.session.add(event)
+            # db.session.commit()
+        except (TypeError, ValidationError) as err:
+            return jsonify(message=list(eval(str(err)).values())[0][0]), 401
+        except ValueError as err:
+            return jsonify(message=err), 401
+        except KeyError:
+            return jsonify(message="Missing data"), 401
         return jsonify(message="Event created successfully"), 201
+    else:
+        return jsonify(message="Event name is already taken."), 404
 
 
 # returns a single event by ID
-def get_one(event_id: str):
-    event = EventProj.query.filter_by(event_ID=event_id).first()
+def get_one(event_id: int):
+    event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
         result = events_schema.dump(event)
         return jsonify(result)
@@ -53,8 +68,8 @@ def get_many(req):
     event_list = \
         EventProj.query.filter_by(or_(name=name,
                                       state=state,
-                                      responsible_ID=responsible_id,
-                                      deputy_ID=deputy_id,
+                                      responsible_id=responsible_id,
+                                      deputy_id=deputy_id,
                                       duedate=due_date))
     if event_list:
         result = events_schema.dump(event_list)
@@ -73,30 +88,37 @@ def get_all():
 # UPDATE
 def update(req):
     event_id = int(req.json['event_id'])
-    event = EventProj.query.filter_by(event_ID=event_id).first()
+    event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
-        # ide kell egy rakat ellenőrzés
-        event.name = req.json['name']
-        event.desc = req.json['desc']
-        event.publicity = req.json['publicity']
-        event.state = req.json['state']
-        event.responsible_id = req.json['responsible_ID']
-        event.deputy_id = req.json['deputy_ID']
-        event.duedate = req.json['duedate']
-        db.session.commit()
-        return jsonify(Message="Event update successful"), 202
+        try:
+            event.desc = req.json['desc'] if 'desc' in req.json else event.desc
+            event.publicity = req.json['publicity'] if 'publicity' in req.json else event.publicity
+            event.state = req.json['state'] if 'state' in req.json else event.state
+            event.duedate = req.json['duedate'] if 'duedate' in req.json else event.duedate
+            if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
+                event.responsible_id = req.json['responsible_id']
+            event_schema.load(req.json)
+            db.session.commit()
+        except (TypeError, ValidationError) as err:
+            return jsonify(message=list(eval(str(err)).values())[0][0]), 401
+        except ValueError as err:
+            return jsonify(message=err), 401
+        except KeyError:
+            return jsonify(message="Missing data"), 401
+        return jsonify(message="Event updated successfully"), 201
     else:
         return jsonify(Message="Event not found"), 404
 
 
 # DELETE
 def delete(event_id: int):
-    event = EventProj.query.filter_by(event_ID=event_id).first()
+    event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
         db.session.delete(event)
         db.session.commit()
         return jsonify(Message="Event has beeen deleted"), 202
     else:
         return jsonify(Message="Event not found"), 404
+
 
 # A role-okat is itt kellene valahol létrehozni

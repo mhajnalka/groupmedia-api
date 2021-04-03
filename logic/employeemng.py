@@ -10,6 +10,11 @@ employee_schema = EmployeeSchema()
 employees_schema = EmployeeSchema(many=True)
 
 
+# #################################################################
+# FOR EMPLOYEE REQUESTS
+# #################################################################
+
+
 # ADD
 def add(req):
     try:
@@ -132,3 +137,16 @@ def delete(emp_id: int):
         return jsonify(Message="Employee has been deleted"), 202
     else:
         return jsonify(Message="Employee not found"), 404
+
+
+# #################################################################
+# OTHER
+# #################################################################
+
+# returns a single employee by ID
+def exists(emp_id: int):
+    employee = Employee.query.filter_by(emp_id=emp_id).first()
+    if employee:
+        return True
+    else:
+        return False

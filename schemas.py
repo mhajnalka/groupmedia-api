@@ -77,4 +77,3 @@ class EventProjSchema(ma.Schema):
     state = fields.String(validate=validate.Length(max=10))
     duedate = fields.Date('%Y-%m-%d')
     responsible_id = fields.Integer()
-    deputy_id = fields.Integer()
