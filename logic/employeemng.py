@@ -68,6 +68,10 @@ def login(req):
 def get_one(emp_id: int):
     employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
+        """        
+        print(employee.ref_responsibleof)
+        e = employee.ref_responsibleof[1]
+        print(e.name)"""
         result = employee_schema.dump(employee)
         return jsonify(result)
     else:

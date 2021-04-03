@@ -2,7 +2,6 @@ import datetime
 
 from flask import jsonify
 from marshmallow import ValidationError
-
 from logic import employeemng
 from schemas import EventProjSchema
 from models import EventProj
@@ -11,6 +10,8 @@ from sqlalchemy import or_
 
 event_schema = EventProjSchema()
 events_schema = EventProjSchema(many=True)
+
+_statuses = ('PENDING', 'INPROGRESS', 'WAITING', 'FINISHED', 'CANCELLED')
 
 
 # #################################################################
@@ -31,6 +32,8 @@ def add(req):
             event.desc = req.json['desc'] if 'desc' in req.json else ""
             event.publicity = req.json['publicity'] if 'publicity' in req.json else ""
             event.state = req.json['state'] if 'state' in req.json else ""
+            if event.state not in _statuses:
+                return jsonify(message="Invalid status for an event."), 404
             event.duedate = datetime.datetime.strptime(req.json['duedate'], '%d-%m-%Y') if 'duedate' in req.json else ""
             if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
                 event.responsible_id = req.json['responsible_id']
@@ -96,6 +99,8 @@ def update(req):
             event.desc = req.json['desc'] if 'desc' in req.json else event.desc
             event.publicity = req.json['publicity'] if 'publicity' in req.json else event.publicity
             event.state = req.json['state'] if 'state' in req.json else event.state
+            if event.state not in _statuses:
+                return jsonify(message="Invalid status for an event."), 404
             event.duedate = req.json['duedate'] if 'duedate' in req.json else event.duedate
             if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
                 event.responsible_id = req.json['responsible_id']
