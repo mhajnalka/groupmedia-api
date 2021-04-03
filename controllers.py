@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint
 from app import db, jwt
 from flask_jwt_extended import jwt_required, create_access_token
-from logic import employeemng
+from logic import employeemng, eventmng
 
 routes_blueprint = Blueprint('routes', __name__)
 
@@ -27,9 +27,9 @@ def login():
     return employeemng.login(request)
 
 
-@routes_blueprint.route('/get_employee/<string:emp_id>', methods=['GET'])
+@routes_blueprint.route('/get_employee/<int:emp_id>', methods=['GET'])
 # @jwt_required()
-def get_employee(emp_id: str):
+def get_employee(emp_id: int):
     return employeemng.get_one(emp_id)
 
 
@@ -60,6 +60,42 @@ def delete_employee(emp_id: int):
 # #################################################################
 # EVENT REQUESTS
 # #################################################################
+
+
+@routes_blueprint.route('/add_event', methods=['POST'])
+# @jwt_required()
+def add_event():
+    return eventmng.add(request)
+
+
+@routes_blueprint.route('/get_event/<int:event_id>', methods=['GET'])
+# @jwt_required()
+def get_event(event_id: int):
+    return eventmng.get_one(event_id)
+
+
+@routes_blueprint.route('/get_events', methods=['GET'])
+# @jwt_required()
+def get_events():
+    return eventmng.get_many(request)
+
+
+@routes_blueprint.route('/get_all_events', methods=['GET'])
+# @jwt_required()
+def get_all_events():
+    return eventmng.get_all()
+
+
+@routes_blueprint.route('/update_event', methods=['PUT'])
+# @jwt_required()
+def update_event():
+    return eventmng.update(request)
+
+
+@routes_blueprint.route('/delete_event/<int:event_id>', methods=['PUT'])
+# @jwt_required()
+def delete_event(event_id: int):
+    return eventmng.delete(event_id)
 
 
 # #################################################################

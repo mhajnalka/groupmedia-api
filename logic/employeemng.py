@@ -36,9 +36,10 @@ def add(req):
             employee.region = req.json['region'] if 'region' in req.json else ""
             employee.postcode = req.json['postcode'] if 'postcode' in req.json else ""
             employee.country = req.json['country'] if 'country' in req.json else ""
+            employee.create = req.json['create'] if 'create' in req.json else False
             employee_schema.load(req.json)
-            # db.session.add(employee)
-            # db.session.commit()
+            db.session.add(employee)
+            db.session.commit()
         except (TypeError, ValidationError) as err:
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:
