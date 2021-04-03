@@ -59,7 +59,7 @@ def login(req):
 
 
 # returns a single employee by ID
-def get_one(emp_id: str):
+def get_one(emp_id: int):
     employee = Employee.query.filter_by(emp_id=emp_id).first()
     if employee:
         result = employee_schema.dump(employee)
