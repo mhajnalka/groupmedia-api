@@ -1,5 +1,4 @@
 import datetime
-
 from flask import jsonify
 from marshmallow import ValidationError
 from logic import employeemng
@@ -128,4 +127,14 @@ def delete(event_id: int):
         return jsonify(Message="Event not found"), 404
 
 
-# A role-okat is itt kellene valahol létrehozni
+# #################################################################
+# OTHER
+# #################################################################
+
+# seeking whether if there's an existing event with the given id
+def exists(event_id: int):
+    event = EventProj.query.filter_by(event_id=event_id).first()
+    if event:
+        return True
+    else:
+        return False

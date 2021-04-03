@@ -60,7 +60,6 @@ class ItemMainSchema(ma.Schema):
 
 class RoleSchema(ma.Schema):
     role_id = fields.Integer()
-    name = fields.String(validate=validate.Length(max=25))
     event_id = fields.Integer()
     emp_id = fields.Integer()
     perm_id = fields.Integer()

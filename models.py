@@ -51,7 +51,6 @@ class ItemVersion(db.Model):
 class Role(db.Model):  # N:
     __tablename__ = 'role'
     role_id = Column(db.Integer, primary_key=True)
-    name = Column(db.String(25), unique=True)
     event_id = db.Column(db.Integer, db.ForeignKey('eventproj.event_id'))
     emp_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
     perm_id = db.Column(db.Integer, db.ForeignKey('permission.perm_id'))
