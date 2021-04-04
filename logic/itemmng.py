@@ -1,20 +1,40 @@
 from flask import jsonify
-from schemas import ItemMainSchema, ItemVersionSchema
+from marshmallow import ValidationError
+from schemas import ItemMainSchema
 from models import *
 from app import db
-from sqlalchemy import or_
 
-iteminfo_schema = ItemMainSchema()
-iteminfos_schema = ItemMainSchema(many=True)
-itemversion_schema = ItemVersionSchema()
-itemversions_schema = ItemMainSchema(many=True)
+item_schema = ItemMainSchema()
+items_schema = ItemMainSchema(many=True)
 
+
+# #################################################################
+# FOR ITEM REQUESTS - not directly as in other *mng.py modules
+# #################################################################
 
 # ADD
-# cross-reference should be handled here
-# checks if we have already created the item, if so we only need a new version
-def add(req):
-    return jsonify(message="Something went wrong"), 404
+def add(json):
+    try:
+        item = ItemMain()
+        item.name = json['name']
+        item.desc = json['desc'] if 'desc' in json else ""
+        if 'extension' in json:
+            item.extension = json['extension']
+        if 'type' in json:
+            item.extension = json['type']
+        item_schema.load(json)
+        return item
+    except (TypeError, ValidationError) as err:
+        return str(list(eval(str(err)).values())[0][0])
+    except ValueError as err:
+        return err
+    except KeyError:
+        return "Missing data"
+
+
+# UPDATE
+def update(req):
+    return ""
 
 
 # DELETE

@@ -138,3 +138,12 @@ def exists(event_id: int):
         return True
     else:
         return False
+
+
+# seeking whether if the event with the given id is still modifiable
+def is_wip(event_id: int):
+    event = EventProj.query.filter_by(event_id=event_id).first()
+    if event.state in [_statuses[0], _statuses[1]]:
+        return True
+    else:
+        return False

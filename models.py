@@ -8,9 +8,9 @@ class Employee(db.Model):
     __tablename__ = 'employee'
     emp_id = Column(db.Integer, primary_key=True)
     username = Column(db.String(25), unique=True)
-    password = Column(db.String(25))
-    firstname = Column(db.String(50))
-    lastname = Column(db.String(50))
+    password = Column(db.String(25), nullable=False)
+    firstname = Column(db.String(50), nullable=False)
+    lastname = Column(db.String(50), nullable=False)
     email = Column(db.String(50), unique=True)
     phone = Column(db.String(20))
     fax = Column(db.String(20))
@@ -30,16 +30,16 @@ class ItemMain(db.Model):
     itemmain_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(25), unique=True)
     desc = Column(db.String(255))
-    extension = Column(db.String(4))
-    type = Column(db.String(4))
+    extension = Column(db.String(4), nullable=False)
+    type = Column(db.String(4), nullable=False)
     ref_versions = db.relationship('ItemVersion', backref='itemmain')
 
 
 class ItemVersion(db.Model):
     __tablename__ = 'workitem'
     item_id = Column(db.Integer, primary_key=True)
-    filename = Column(db.String(25))
-    version = Column(db.Integer)
+    filename = Column(db.String(25), nullable=False)
+    version = Column(db.Integer, nullable=False)
     lockstate = Column(db.Boolean)
     islastver = Column(db.Boolean)
     creadate = Column(db.Date)
@@ -69,7 +69,7 @@ class EventProj(db.Model):
     name = Column(db.String(50), unique=True)
     desc = Column(db.String(255))
     publicity = Column(db.Boolean)
-    state = Column(db.String(10))
+    state = Column(db.String(10), nullable=False)
     duedate = Column(db.Date)
     responsible_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
     ref_items = db.relationship('ItemVersion', backref='project')
