@@ -1,16 +1,14 @@
 import datetime
 from flask import jsonify
 from marshmallow import ValidationError
-from logic import employeemng, eventmng, itemmng
+from logic import employeemng, eventmng, itemmng, rolemng
 from schemas import ItemMainSchema, ItemVersionSchema
 from models import *
 from app import db
 from sqlalchemy import or_
 
-iteminfo_schema = ItemMainSchema()
-iteminfos_schema = ItemMainSchema(many=True)
-itemversion_schema = ItemVersionSchema()
-itemversions_schema = ItemMainSchema(many=True)
+version_schema = ItemVersionSchema()
+versions_schema = ItemMainSchema(many=True)
 
 
 # #################################################################
@@ -41,6 +39,8 @@ def add(req):
             version.creator_id = req.json['creator_id']
         else:
             return jsonify(message="An error happened, creator not found."), 404
+        if not rolemng.exists(version.creator_id, version.project_id, 2):
+            return jsonify(message="Role not found, permission denied."), 404
         # item is true when it exists with the param of name
         if item:
             try:
@@ -57,6 +57,7 @@ def add(req):
                 # +ATTACHMENT, IN AN OTHER METHOD
                 # needs to be stored (maybe even renamed)
 
+                version_schema.load(version)
                 db.session.add(version)
                 db.session.commit()
             except (TypeError, ValidationError) as err:
@@ -78,6 +79,8 @@ def add(req):
 
                 # +ATTACHMENT, IN AN OTHER METHOD
                 # needs to be stored (maybe even renamed)
+
+                version_schema.load(version)
                 db.session.add(new_item)
                 db.session.add(version)
                 db.session.commit()

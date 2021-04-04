@@ -81,3 +81,18 @@ def delete(role_id: int):
         return jsonify(Message="Role has been deleted"), 202
     else:
         return jsonify(Message="An error happened, role not found"), 404
+
+
+# #################################################################
+# OTHER
+# #################################################################
+
+# returns a boolean by role_id if exists or not
+def exists(emp_id: int, event_id: int, perm_id: int):
+    role = Role.query.filter_by(emp_id=emp_id,
+                                event_id=event_id,
+                                perm_id=perm_id).first()
+    if role:
+        return True
+    else:
+        return False
