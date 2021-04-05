@@ -34,11 +34,13 @@ def db_seed():
     app_test_user = initdata.test_user
     app_permission_r = initdata.read_permission
     app_permission_w = initdata.write_permission
+    app_permission_v = initdata.validate_permission
 
     db.session.add(app_company)
     db.session.add(app_test_user)
     db.session.add(app_permission_r)
     db.session.add(app_permission_w)
+    db.session.add(app_permission_v)
     db.session.commit()
     print('Database has been successfully seeded')
 

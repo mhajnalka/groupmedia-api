@@ -22,8 +22,9 @@ def add(req):
         name = req.json['name']
         item = ItemMain.query.filter_by(name=name).first()
         version = ItemVersion()
+        version.desc = req.json['desc'] if 'desc' in req.json else ""
         version.lockstate = 1
-        version.islastver = 1
+        version.islastver = 0
         version.creadate = \
             datetime.datetime.strptime(req.json['creadate'], '%d-%m-%Y') if 'creadate' in req.json else ""
         # checking project and it's state, which must be modifiable
@@ -53,7 +54,6 @@ def add(req):
                 if prev_version.lockstate:
                     return jsonify(message="Item cannot be modified when previous version is locked.")
                 version.version = prev_version.version + 1
-                prev_version.islastver = 0
                 # +ATTACHMENT, IN AN OTHER METHOD
                 # needs to be stored (maybe even renamed)
 
@@ -64,8 +64,8 @@ def add(req):
                 return jsonify(message=list(eval(str(err)).values())[0][0]), 401
             except ValueError as err:
                 return jsonify(message=err), 401
-            except KeyError:
-                return jsonify(message="Missing data"), 401
+            except KeyError as err:
+                return jsonify(message="Missing data: " + err.args[0]), 401
         else:
             # 1.0 version - new main item
             version.version = 1
@@ -88,15 +88,55 @@ def add(req):
                 return jsonify(message=list(eval(str(err)).values())[0][0]), 401
             except ValueError as err:
                 return jsonify(message=err), 401
-            except KeyError:
-                return jsonify(message="Missing data"), 401
+            except KeyError as err:
+                return jsonify(message="Missing data: " + err.args[0]), 401
     else:
         return jsonify(message="Name cannot be empty"), 404
     return jsonify(message="Item has been created"), 201
 
 
+# handles received files separately from administration
+# in order to be able to manage files, file name has to be the same as defined in the add method
+def process_file(req):
+    return ""
+
+
+# UPDATE
+def update(req):
+    # modifiable attributes:
+    return ""
+
+
+# checks for validation role, unlocks version, so it becomes the last/active version in the system
+def validate(req):
+    if 'item_id' in req.json:
+        item_id = req.json['validator_id']
+    else:
+        return jsonify(message="Bad request."), 404
+    version = ItemVersion.query.filter_by(item_id=item_id).first()
+    if not version:
+        return jsonify(message="Version not found"), 404
+    # checking permission
+    if 'validator_id' in req.json and employeemng.exists(req.json['validator_id']):
+        validator_id = req.json['validator_id']
+    else:
+        return jsonify(message="An error happened, validator user not found."), 404
+    if not rolemng.exists(validator_id, version.project_id, 3) or \
+            EventProj.query.filter_by(event_id=version.project_id,
+                                      responsible_id=validator_id):
+        return jsonify(message="This user does not have permission to validate items."), 404
+    if not version.version == 1:
+        prev_version = ItemVersion.query.filter_by(itemmain_id=version.itemmain_id,
+                                                   islastver=True).first()
+        prev_version.islastver = 0
+    version.islastver = 1
+    version.lockstate = 0
+    db.session.commit()
+    return jsonify(message="Item has been validated successfully"), 201
+
+
 # DELETE
 # cross-reference should be handled here
-# if there's only one single version, main info should be deleted as well
+# if there's only one single version, main info and stored file versions should be deleted as well
 def delete(req):
     return jsonify(message="Something went wrong"), 404

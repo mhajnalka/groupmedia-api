@@ -3,7 +3,7 @@ from flask import jsonify
 from marshmallow import ValidationError
 from logic import employeemng
 from schemas import EventProjSchema
-from models import EventProj
+from models import EventProj, ItemVersion
 from app import db
 from sqlalchemy import or_
 
@@ -116,11 +116,14 @@ def update(req):
         return jsonify(Message="Event not found"), 404
 
 
-# DELETE
+# DELETE or CANCELLED (when not empty)
 def delete(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
-        db.session.delete(event)
+        if ItemVersion.query.filter_by(project_id=event_id).first:
+            event.state = 'CANCELLED'
+        else:
+            db.session.delete(event)
         db.session.commit()
         return jsonify(Message="Event has beeen deleted"), 202
     else:

@@ -42,6 +42,7 @@ class ItemVersionSchema(ma.Schema):
     item_id = fields.Integer()
     filename = fields.String(validate=validate.Length(max=50))
     version = fields.String(validate=validate.Length(max=50))
+    desc = fields.String(validate=validate.Length(max=255))
     lockstate = fields.Boolean()
     islastver = fields.Boolean()
     creadate = fields.Date('%Y-%m-%d')

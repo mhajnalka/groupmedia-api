@@ -40,6 +40,7 @@ class ItemVersion(db.Model):
     item_id = Column(db.Integer, primary_key=True)
     filename = Column(db.String(25), nullable=False)
     version = Column(db.Integer, nullable=False)
+    desc = Column(db.String(255))
     lockstate = Column(db.Boolean)
     islastver = Column(db.Boolean)
     creadate = Column(db.Date)

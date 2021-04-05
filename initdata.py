@@ -35,3 +35,6 @@ read_permission = Permission(perm_id=1,
 
 write_permission = Permission(perm_id=2,
                               name='WRITE')
+
+validate_permission = Permission(perm_id=3,
+                                 name='VALIDATE')
