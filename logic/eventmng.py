@@ -100,6 +100,9 @@ def update(req):
             event.state = req.json['state'] if 'state' in req.json else event.state
             if event.state not in _statuses:
                 return jsonify(message="Invalid status for an event."), 404
+            elif event.state == _statuses[4] and ItemVersion.query.filter_by(project_id=event_id,
+                                                                             lockstate=True):
+                return jsonify(message="Event cannot be closed, it has items that have not been validated yet."), 401
             event.duedate = req.json['duedate'] if 'duedate' in req.json else event.duedate
             if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
                 event.responsible_id = req.json['responsible_id']
@@ -121,7 +124,7 @@ def delete(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
         if ItemVersion.query.filter_by(project_id=event_id).first:
-            event.state = 'CANCELLED'
+            event.state = _statuses[4]
         else:
             db.session.delete(event)
         db.session.commit()
@@ -146,7 +149,7 @@ def exists(event_id: int):
 # seeking whether if the event with the given id is still modifiable
 def is_wip(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
-    if event.state in [_statuses[0], _statuses[1]]:
+    if event.state in [_statuses[1]]:
         return True
     else:
         return False

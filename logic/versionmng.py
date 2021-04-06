@@ -5,7 +5,6 @@ from logic import employeemng, eventmng, itemmng, rolemng
 from schemas import ItemMainSchema, ItemVersionSchema
 from models import *
 from app import db
-from sqlalchemy import or_
 
 version_schema = ItemVersionSchema()
 versions_schema = ItemMainSchema(many=True)
@@ -24,6 +23,7 @@ def add(req):
         version = ItemVersion()
         version.desc = req.json['desc'] if 'desc' in req.json else ""
         version.lockstate = 1
+        version.rejected = 0
         version.islastver = 0
         version.creadate = \
             datetime.datetime.strptime(req.json['creadate'], '%d-%m-%Y') if 'creadate' in req.json else ""
@@ -103,14 +103,34 @@ def process_file(req):
 
 # UPDATE
 def update(req):
-    # modifiable attributes:
+    if 'item_id' and 'desc' in req.json:
+        version = ItemVersion.query.filter_by(item_id=req.json['item_id']).first()
+        version.desc = req.json['item_id']
+        try:
+            version_schema.load(version)
+            db.session.commit()
+        except (TypeError, ValidationError) as err:
+            return jsonify(message=list(eval(str(err)).values())[0][0]), 401
+        except ValueError as err:
+            return jsonify(message=err), 401
+        except KeyError as err:
+            return jsonify(message="Missing data: " + err.args[0]), 401
+    else:
+        return jsonify(message="Wrong parameters given."), 401
+    # future option is to be able to change the uploaded file
+    return ""
+
+
+# returns the stored file
+def show_file(req):
     return ""
 
 
 # checks for validation role, unlocks version, so it becomes the last/active version in the system
-def validate(req):
+# or when set_valid is false then sets reject attribute to TRUE
+def validate(req, set_valid):
     if 'item_id' in req.json:
-        item_id = req.json['validator_id']
+        item_id = req.json['item_id']
     else:
         return jsonify(message="Bad request."), 404
     version = ItemVersion.query.filter_by(item_id=item_id).first()
@@ -125,18 +145,32 @@ def validate(req):
             EventProj.query.filter_by(event_id=version.project_id,
                                       responsible_id=validator_id):
         return jsonify(message="This user does not have permission to validate items."), 404
-    if not version.version == 1:
-        prev_version = ItemVersion.query.filter_by(itemmain_id=version.itemmain_id,
-                                                   islastver=True).first()
-        prev_version.islastver = 0
-    version.islastver = 1
-    version.lockstate = 0
+    if set_valid:
+        if not version.version == 1:
+            prev_version = ItemVersion.query.filter_by(itemmain_id=version.itemmain_id,
+                                                       islastver=True).first()
+            prev_version.islastver = 0
+        version.islastver = 1
+        version.lockstate = 0
+        version.rejected = 0
+        db.session.commit()
+        return jsonify(message="Item has been validated successfully"), 201
+    version.rejected = 1
     db.session.commit()
-    return jsonify(message="Item has been validated successfully"), 201
+    return jsonify(message="Item has been successfully rejected"), 201
 
 
 # DELETE
 # cross-reference should be handled here
 # if there's only one single version, main info and stored file versions should be deleted as well
 def delete(req):
+    if 'item_id' in req.json:
+        item_id = req.json['item_id']
+        version = ItemVersion.query.filter_by(item_id=item_id).first()
+        if version:
+            db.session.delete(version)
+            db.session.commit()
+            return jsonify(Message="Version has been deleted"), 202
+        else:
+            return jsonify(Message="An error happened, version not found"), 404
     return jsonify(message="Something went wrong"), 404
