@@ -42,6 +42,7 @@ class ItemVersion(db.Model):
     version = Column(db.Integer, nullable=False)
     desc = Column(db.String(255))
     lockstate = Column(db.Boolean)
+    rejected = Column(db.Boolean)
     islastver = Column(db.Boolean)
     creadate = Column(db.Date)
     itemmain_id = db.Column(db.Integer, db.ForeignKey('itemmain.itemmain_id'))
