@@ -163,14 +163,21 @@ def validate(req, set_valid):
 # DELETE
 # cross-reference should be handled here
 # if there's only one single version, main info and stored file versions should be deleted as well
-def delete(req):
-    if 'item_id' in req.json:
-        item_id = req.json['item_id']
-        version = ItemVersion.query.filter_by(item_id=item_id).first()
-        if version:
-            db.session.delete(version)
-            db.session.commit()
-            return jsonify(Message="Version has been deleted"), 202
-        else:
-            return jsonify(Message="An error happened, version not found"), 404
-    return jsonify(message="Something went wrong"), 404
+def delete(item_id: int):
+    version = ItemVersion.query.filter_by(item_id=item_id).first()
+    if version:
+        db.session.delete(version)
+        db.session.commit()
+        return jsonify(Message="Version has been deleted"), 202
+    else:
+        return jsonify(Message="An error happened, version not found"), 404
+
+
+# #################################################################
+# OTHER
+# #################################################################
+
+def get_versions(itemmain_id):
+    version_list = ItemVersion.query.filter_by(itemmain_id=itemmain_id)
+    result = version_list.dump(version_list)
+    return jsonify(result), 200

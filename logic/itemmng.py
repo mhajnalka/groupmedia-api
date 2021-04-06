@@ -1,5 +1,7 @@
 from flask import jsonify
 from marshmallow import ValidationError
+
+from logic import versionmng
 from schemas import ItemMainSchema
 from models import *
 from app import db
@@ -30,6 +32,32 @@ def add(json):
         return err
     except KeyError:
         return "Missing data"
+
+
+# returns a single item by ID
+def get_one(itemmain_id: int):
+    item = ItemMain.query.filter_by(itemmain_id=itemmain_id).first()
+    if item:
+        result = item_schema.dump(item)
+        return jsonify(result)
+    else:
+        return jsonify(message="Item not found"), 404
+
+
+# returns all the events
+def get_all():
+    item_list = ItemMain.query.all()
+    result = items_schema.dump(item_list)
+    return jsonify(result), 200
+
+
+# returns a single item by ID
+def get_all_version(itemmain_id: int):
+    item = ItemMain.query.filter_by(itemmain_id=itemmain_id).first()
+    if item:
+        return versionmng.get_versions(itemmain_id)
+    else:
+        return jsonify(message="Item not found"), 404
 
 
 # DELETE
