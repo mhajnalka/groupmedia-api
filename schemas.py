@@ -1,9 +1,6 @@
 from flask_marshmallow import Marshmallow
 from marshmallow import fields, ValidationError, validates, validate
 import re
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
-
-from models import Employee, ItemVersion, ItemMain, Permission, EventProj, Role
 
 ma = Marshmallow()
 
@@ -80,3 +77,17 @@ class EventProjSchema(ma.Schema):
     state = fields.String(validate=validate.Length(max=10))
     duedate = fields.Date('%d-%m-%Y')
     responsible_id = fields.Integer()
+
+
+class CompanySchema(ma.Schema):
+    comp_id = fields.Integer()
+    name = fields.String(validate=validate.Length(max=255))
+    email = fields.Email()
+    phone = fields.String(validate=validate.Length(min=10, max=20))
+    fax = fields.String(validate=validate.Length(min=8, max=20))
+    web = fields.String(validate=validate.Length(min=5, max=255))
+    address = fields.String(validate=validate.Length(max=50))
+    city = fields.String(validate=validate.Length(max=50))
+    region = fields.String(validate=validate.Length(max=50))
+    postcode = fields.String(validate=validate.Length(equal=4))
+    country = fields.String(validate=validate.Length(max=50))

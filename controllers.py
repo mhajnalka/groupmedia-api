@@ -1,7 +1,7 @@
 from flask import request, jsonify, Blueprint
 from app import db, jwt
 from flask_jwt_extended import jwt_required, create_access_token
-from logic import employeemng, eventmng, versionmng, itemmng
+from logic import employeemng, eventmng, versionmng, itemmng, constmng
 
 routes_blueprint = Blueprint('routes', __name__)
 
@@ -165,3 +165,13 @@ def get_all_item():
 # @jwt_required()
 def get_all_version(itemmain_id: int):
     return itemmng.get_all_version(itemmain_id)
+
+
+# #################################################################
+# OTHER KIND OF REQUESTS
+# #################################################################
+
+@routes_blueprint.route('/get_contact', methods=['GET'])
+# @jwt_required()
+def get_contact():
+    return constmng.get_one(1)

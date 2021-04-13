@@ -1,5 +1,3 @@
-from datetime import date
-
 from sqlalchemy import Column
 from app import db
 
@@ -81,7 +79,7 @@ class EventProj(db.Model):
 class Company(db.Model):
     __tablename__ = 'company'
     comp_id = Column(db.Integer, primary_key=True)
-    name = Column(db.String(25), unique=True)
+    name = Column(db.String(255), unique=True)
     email = Column(db.String(50))
     phone = Column(db.String(20))
     fax = Column(db.String(20))
