@@ -33,10 +33,11 @@ def get_employee(emp_id: int):
     return employeemng.get_one(emp_id)
 
 
-@routes_blueprint.route('/get_employees', methods=['GET'])
+@routes_blueprint.route('/get_employees', defaults={'username': ''})
+@routes_blueprint.route('/get_employees/<username>', methods=['GET'])
 # @jwt_required()
-def get_employees():
-    return employeemng.get_many(request)
+def get_employees(username: str):
+    return employeemng.get_many(username, request)
 
 
 @routes_blueprint.route('/get_all_employees', methods=['GET'])

@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify, request
 from marshmallow import ValidationError
 from schemas import EmployeeSchema
 from models import Employee
@@ -48,20 +48,21 @@ def add(req):
             return jsonify(message="Missing data"), 401
         return jsonify(message="Employee created successfully"), 201
     else:
-        return jsonify(message="Username is already taken."), 404
+        return jsonify(message="Username is already taken."), 401
 
 
 # returns success message and access token for authorization
-def login(req):
-    username = req.json['username']
-    password = req.json['password']
-
-    if Employee.query.filter_by(username=username, password=password).first():
-        # match found, sending jwt token for logging in
-        access_token = create_access_token(identity=username)
-        return jsonify(message="Successful login", access_token=access_token), 200
-    else:
-        return jsonify(message="Invalid login data"), 401
+def login(req: request):
+    if 'username' or 'password' in req.json:
+        username = req.json['username']
+        password = req.json['password']
+        if Employee.query.filter_by(username=username, password=password).first():
+            # match found, sending jwt token for logging in
+            access_token = create_access_token(identity=username)
+            return jsonify(message="Successful login", access_token=access_token), 200
+        else:
+            return jsonify(message="Invalid login data"), 404
+    return jsonify(message="Bad request"), 401
 
 
 # returns a single employee by ID
@@ -79,13 +80,24 @@ def get_one(emp_id: int):
 
 
 # returns a list of filtered employees
-def get_many(req):
-    username = req.args.get('username')
-    firstname = req.args.get('firstname')
-    lastname = req.args.get('lastname')
-    email = req.args.get('email')
+def get_many(username: str, req):
+    #  username = req.json['username'] if 'username' in req.json else ""
     employee_list = \
-        Employee.query.filter_by(or_(username=username, firstname=firstname, lastname=lastname, email=email))
+        Employee.query.filter((Employee.username == username))
+    """firstname = req.json['firstname'] if 'firstname' in req.json else ""
+    lastname = req.json['lastname'] if 'lastname' in req.json else ""
+    email = req.json['email'] if 'email' in req.json else ""
+    searched = req.json['searched'] if 'searched' in req.json else ""
+    if searched:
+        employee_list = \
+            Employee.query.filter((Employee.username == searched) | (Employee.firstname == searched) |
+                                  (Employee.firstname == searched) | (Employee.lastname == searched) |
+                                  (Employee.email == searched))
+    else:
+        employee_list = \
+            Employee.query.filter((Employee.username == username) | (Employee.firstname == firstname) |
+                                  (Employee.firstname == firstname) | (Employee.lastname == lastname) |
+                                  (Employee.email == email))"""
     if employee_list:
         result = employees_schema.dump(employee_list)
         return jsonify(result)
