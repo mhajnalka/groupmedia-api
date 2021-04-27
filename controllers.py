@@ -1,4 +1,5 @@
 from flask import request, jsonify, Blueprint
+
 from app import db, jwt
 from flask_jwt_extended import jwt_required, create_access_token
 from logic import employeemng, eventmng, versionmng, itemmng, constmng
@@ -41,7 +42,7 @@ def get_employees(username: str):
 
 
 @routes_blueprint.route('/get_all_employees', methods=['GET'])
-# @jwt_required()
+@jwt_required()
 def get_all_employees():
     return employeemng.get_all()
 
@@ -172,6 +173,6 @@ def get_all_version(itemmain_id: int):
 # #################################################################
 
 @routes_blueprint.route('/get_contact', methods=['GET'])
-# @jwt_required()
+@jwt_required()
 def get_contact():
     return constmng.get_one(1)

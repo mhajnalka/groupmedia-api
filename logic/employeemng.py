@@ -173,3 +173,12 @@ def exists(emp_id: int):
         return True
     else:
         return False
+
+
+# returns a single employee by ID
+def find_user(username: str):
+    employee = Employee.query.filter_by(username=username).first()
+    if employee:
+        return employee
+    else:
+        return

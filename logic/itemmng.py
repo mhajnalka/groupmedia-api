@@ -15,22 +15,25 @@ items_schema = ItemMainSchema(many=True)
 # #################################################################
 
 # ADD
-def add(json):
+def add(form):
     try:
         item = ItemMain()
-        item.name = json['name']
-        item.desc = json['desc'] if 'desc' in json else ""
-        if 'extension' in json:
-            item.extension = json['extension']
-        if 'type' in json:
-            item.extension = json['type']
-        item_schema.load(json)
+        item.itemmain_id = 1
+        item.name = form['name']
+        item.desc = form['desc'] if 'desc' in form else ""
+        if 'extension' in form:
+            item.extension = form['extension']
+        if 'type' in form:
+            item.extension = form['type']
         return item
     except (TypeError, ValidationError) as err:
+        print('Error is: ' + str(list(eval(str(err)).values())[0][0]))
         return str(list(eval(str(err)).values())[0][0])
     except ValueError as err:
+        print(err)
         return err
     except KeyError:
+        print("MISS")
         return "Missing data"
 
 
@@ -65,7 +68,7 @@ def get_all_version(itemmain_id: int):
 # if there's only one single version, main info should be deleted as well
 def delete(req):
     try:
-        itemmain_id = req.json['itemmain_id']
+        itemmain_id = req.form['itemmain_id']
     except KeyError as err:
         return jsonify(message="Main item cannot be undefined."), 401
     item = ItemMain.query.filter_by(itemmain_id=itemmain_id)
