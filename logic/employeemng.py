@@ -59,7 +59,13 @@ def login(req: request):
         if Employee.query.filter_by(username=username, password=password).first():
             # match found, sending jwt token for logging in
             access_token = create_access_token(identity=username)
-            return jsonify(message="Successful login", access_token=access_token), 200
+            if username == 'admin':
+                msg = 'admin'
+            elif Employee.query.filter_by(username=username, password=password).first().create:
+                msg = 'validator'
+            else:
+                msg = 'worker'
+            return jsonify(message=msg, access_token=access_token), 200
         else:
             return jsonify(message="Invalid login data"), 404
     return jsonify(message="Bad request"), 401
