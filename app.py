@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 
@@ -10,6 +11,7 @@ jwt = JWTManager(app)
 
 from controllers import routes_blueprint
 app.register_blueprint(routes_blueprint)
+CORS(app)
 
 import initdata
 
