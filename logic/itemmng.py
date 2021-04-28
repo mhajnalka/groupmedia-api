@@ -18,7 +18,6 @@ items_schema = ItemMainSchema(many=True)
 def add(form):
     try:
         item = ItemMain()
-        item.itemmain_id = 1
         item.name = form['name']
         item.desc = form['desc'] if 'desc' in form else ""
         if 'extension' in form:

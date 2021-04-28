@@ -17,6 +17,7 @@ employees_schema = EmployeeSchema(many=True)
 
 # ADD
 def add(req):
+    print(req.json)
     try:
         username = req.json['username']
     except KeyError as err:
@@ -41,6 +42,7 @@ def add(req):
             db.session.add(employee)
             db.session.commit()
         except (TypeError, ValidationError) as err:
+            print(err)
             return jsonify(message=list(eval(str(err)).values())[0][0]), 401
         except ValueError as err:
             return jsonify(message=err), 401

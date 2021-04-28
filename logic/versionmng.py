@@ -31,8 +31,7 @@ def add(req):
         version.lockstate = 1
         version.rejected = 0
         version.islastver = 0
-        version.creadate = \
-            datetime.datetime.strptime(req.form['creadate'], '%d-%m-%Y') if 'creadate' in req.form else ""
+        version.creadate = datetime.datetime.now()
         # checking project and it's state, which must be modifiable
 
         '''        
@@ -60,20 +59,22 @@ def add(req):
                 # we have to raise the major part of the version number, minor part is not handled
                 prev_version = ItemVersion.query.filter_by(itemmain_id=item.itemmain_id,
                                                            islastver=True).first()
+                if not prev_version:
+                    return jsonify(message="Previous version hasn't been validated yet."), 401
                 if prev_version.lockstate:
                     return jsonify(message="Item cannot be modified when previous version is locked."), 401
                 version.version = prev_version.version + 1
-                # +ATTACHMENT, IN AN OTHER METHOD
-                # needs to be stored (maybe even renamed)
 
-                file = req.files
-                if 'file2upload' not in file or file.filename == '':
-                    return jsonify(message="Missing file."), 401
-                if not process_file(file):
-                    return jsonify(message="File process error."), 401
-                version.filename = file.filename
-
-                version_schema.load(version)
+                # needs to be stored (also renamed)
+                if 'file2upload' not in req.files:
+                    return jsonify(message="File missing."), 401
+                file = req.files['file2upload']
+                if file.filename == '':
+                    return jsonify(message="File missing."), 401
+                version.filename = process_file(file=file,
+                                                name=item.name,
+                                                version=version.version)
+                db.session.add(item)
                 db.session.add(version)
                 db.session.commit()
             except (TypeError, ValidationError) as err:
@@ -92,21 +93,18 @@ def add(req):
                 return jsonify(message=new_item), 401
             version.itemmain_id = new_item.itemmain_id
             try:
-                # +ATTACHMENT, IN AN OTHER METHOD
-                # needs to be stored (maybe even renamed)
+                # needs to be stored (also renamed)
                 if 'file2upload' not in req.files:
                     return jsonify(message="File missing."), 401
                 file = req.files['file2upload']
                 if file.filename == '':
                     return jsonify(message="File missing."), 401
-                if not process_file(file):
-                    print(file.filename)
-                    return jsonify(message="File process error."), 401
-                version.filename = file.filename
-
-                # db.session.add(new_item)
-                # db.session.add(version)
-                # db.session.commit()
+                version.filename = process_file(file=file,
+                                                name=new_item.name,
+                                                version=version.version)
+                db.session.add(new_item)
+                db.session.add(version)
+                db.session.commit()
             except (TypeError, ValidationError) as err:
                 return jsonify(message=list(eval(str(err)).values())[0][0]), 401
             except ValueError as err:
@@ -120,14 +118,14 @@ def add(req):
 
 # handles received files separately from administration
 # in order to be able to manage files, file name has to be the same as defined in the add method
-def process_file(file):
+def process_file(file, name="item", version=1):
     try:
         if file and name_chk(file.filename):
             filename = secure_filename(file.filename)
-            if not os.path.exists(os.path.join(app.config['UPLOAD_DIR'])):
-                os.makedirs(os.path.join(app.config['UPLOAD_DIR']))
-            file.save(os.path.join(app.config['UPLOAD_DIR'], filename))
-        return True
+            path_exists()
+            new_name = name + str(version) + '.' + filename.rsplit('.', 1)[1].lower()
+            file.save(os.path.join(app.config['UPLOAD_DIR'], new_name))
+        return new_name
     except:
         return False
 
@@ -135,6 +133,16 @@ def process_file(file):
 # checks filename if it's extension is in the array of the allowed ones
 def name_chk(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['UPLOAD_EXTENSIONS']
+
+
+# checks if the given path exists, creates upload directory if not
+def path_exists(chk_only=False):
+    if not os.path.exists(os.path.join(app.config['UPLOAD_DIR'])):
+        if chk_only:
+            return False
+        else:
+            os.makedirs(os.path.join(app.config['UPLOAD_DIR']))
+    return True
 
 
 # UPDATE

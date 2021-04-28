@@ -28,8 +28,8 @@ class ItemMain(db.Model):
     itemmain_id = Column(db.Integer, primary_key=True)
     name = Column(db.String(25), unique=True)
     desc = Column(db.String(255))
-    extension = Column(db.String(4), nullable=False)
-    type = Column(db.String(4), nullable=False)
+    extension = Column(db.String(4))
+    type = Column(db.String(4))
     ref_versions = db.relationship('ItemVersion', backref='itemmain')
 
 
