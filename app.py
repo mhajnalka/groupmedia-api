@@ -33,12 +33,16 @@ def db_drop():
 @app.cli.command('db_seed')
 def db_seed():
     app_company = initdata.company
+    app_admin = initdata.admin
+    app_validator = initdata.test_validator
     app_test_user = initdata.test_user
     app_permission_r = initdata.read_permission
     app_permission_w = initdata.write_permission
     app_permission_v = initdata.validate_permission
 
     db.session.add(app_company)
+    db.session.add(app_admin)
+    db.session.add(app_validator)
     db.session.add(app_test_user)
     db.session.add(app_permission_r)
     db.session.add(app_permission_w)
