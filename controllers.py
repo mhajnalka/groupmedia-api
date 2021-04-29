@@ -34,6 +34,12 @@ def get_employee(emp_id: int):
     return employeemng.get_one(emp_id)
 
 
+@routes_blueprint.route('/get_profile/<username>', methods=['GET'])
+# @jwt_required()
+def get_profile(username: str):
+    return employeemng.get_profile(username)
+
+
 @routes_blueprint.route('/get_employees', defaults={'username': ''})
 @routes_blueprint.route('/get_employees/<username>', methods=['GET'])
 # @jwt_required()
@@ -105,7 +111,7 @@ def delete_event(event_id: int):
 # #################################################################
 
 @routes_blueprint.route('/add_version', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def add_version():
     return versionmng.add(request)
 

@@ -87,6 +87,20 @@ def get_one(emp_id: int):
         return jsonify(message="Employee not found"), 404
 
 
+# returns a single employee by ID
+def get_profile(username: str):
+    employee = Employee.query.filter_by(username=username).first()
+    if employee:
+        """        
+        print(employee.ref_responsibleof)
+        e = employee.ref_responsibleof[1]
+        print(e.name)"""
+        result = employee_schema.dump(employee)
+        return jsonify(result)
+    else:
+        return jsonify(message="Employee not found"), 404
+
+
 # returns a list of filtered employees
 def get_many(username: str, req):
     #  username = req.json['username'] if 'username' in req.json else ""

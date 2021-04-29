@@ -64,13 +64,14 @@ def add(req):
                 if prev_version.lockstate:
                     return jsonify(message="Item cannot be modified when previous version is locked."), 401
                 version.version = prev_version.version + 1
+                version.itemmain_id=item.itemmain_id
 
                 # needs to be stored (also renamed)
                 if 'file2upload' not in req.files:
-                    return jsonify(message="File missing."), 401
+                    return jsonify(message="Missing file."), 401
                 file = req.files['file2upload']
                 if file.filename == '':
-                    return jsonify(message="File missing."), 401
+                    return jsonify(message="Missing file."), 401
                 version.filename = process_file(file=file,
                                                 name=item.name,
                                                 version=version.version)
@@ -102,7 +103,6 @@ def add(req):
                 version.filename = process_file(file=file,
                                                 name=new_item.name,
                                                 version=version.version)
-                db.session.add(new_item)
                 db.session.add(version)
                 db.session.commit()
             except (TypeError, ValidationError) as err:
@@ -148,8 +148,8 @@ def path_exists(chk_only=False):
 # UPDATE
 def update(req):
     if 'item_id' and 'desc' in req.form:
-        version = ItemVersion.query.filter_by(item_id=req.form['item_id']).first()
-        version.desc = req.form['item_id']
+        version = ItemVersion.query.filter_by(item_id=req.json['item_id']).first()
+        version.desc = req.json['item_id']
         try:
             version_schema.load(version)
             db.session.commit()
@@ -173,21 +173,41 @@ def show_file(req):
 # checks for validation role, unlocks version, so it becomes the last/active version in the system
 # or when set_valid is false then sets reject attribute to TRUE
 def validate(req, set_valid):
-    if 'item_id' in req.form:
-        item_id = req.form['item_id']
+    print(req)
+    print(req.json)
+    if 'item_id' in req.json:
+        item_id = req.json['item_id']
+        version = ItemVersion.query.filter_by(item_id=item_id).first()
+    elif 'itemname' in req.json:
+        itemname = req.json['itemname']
+        main_item = ItemMain.query.filter_by(name=itemname).first()
+        version = ItemVersion.query.filter_by(itemmain_id=main_item.itemmain_id,
+                                              lockstate=1).first()
+        print(itemname)
+        print(main_item.itemmain_id)
+        print(version.filename)
     else:
+        print('Bad request')
         return jsonify(message="Bad request."), 404
-    version = ItemVersion.query.filter_by(item_id=item_id).first()
     if not version:
+        print(version)
+        print('NOT FOUNDt')
         return jsonify(message="Version not found"), 404
     # checking permission
-    if 'validator_id' in req.form and employeemng.exists(req.form['validator_id']):
-        validator_id = req.form['validator_id']
+    validator_id = 0
+    if 'username' in req.json:
+        emp = employeemng.find_user(req.json['username'])
+        validator_id = emp.emp_id
     else:
+        print('VALIDATOR NOT FOUND')
         return jsonify(message="An error happened, validator user not found."), 404
-    if not rolemng.exists(validator_id, version.project_id, 3) or \
-            EventProj.query.filter_by(event_id=version.project_id,
-                                      responsible_id=validator_id):
+    print(emp.create)
+    if not emp.create and \
+            (not rolemng.exists(validator_id, version.project_id, 3) or EventProj.query.filter_by(
+                event_id=version.project_id,
+                responsible_id=validator_id)):
+
+        print('ROLE NOT FOUND')
         return jsonify(message="This user does not have permission to validate items."), 404
     if set_valid:
         if not version.version == 1:
@@ -200,6 +220,8 @@ def validate(req, set_valid):
         db.session.commit()
         return jsonify(message="Item has been validated successfully"), 201
     version.rejected = 1
+    delete(item_id=version.item_id,
+           reject=True)
     db.session.commit()
     return jsonify(message="Item has been successfully rejected"), 201
 
@@ -207,11 +229,13 @@ def validate(req, set_valid):
 # DELETE
 # cross-reference should be handled here
 # if there's only one single version, main info and stored file versions should be deleted as well
-def delete(item_id: int):
+def delete(item_id: int, reject=False):
     version = ItemVersion.query.filter_by(item_id=item_id).first()
     if version:
         db.session.delete(version)
         db.session.commit()
+        if reject:
+            return
         return jsonify(Message="Version has been deleted"), 202
     else:
         return jsonify(Message="An error happened, version not found"), 404

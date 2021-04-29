@@ -24,6 +24,8 @@ def add(form):
             item.extension = form['extension']
         if 'type' in form:
             item.extension = form['type']
+        db.session.add(item)
+        db.session.commit()
         return item
     except (TypeError, ValidationError) as err:
         print('Error is: ' + str(list(eval(str(err)).values())[0][0]))
