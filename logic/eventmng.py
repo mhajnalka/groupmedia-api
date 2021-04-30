@@ -29,16 +29,17 @@ def add(req):
             event = EventProj()
             event.name = name
             event.desc = req.json['desc'] if 'desc' in req.json else ""
-            event.publicity = req.json['publicity'] if 'publicity' in req.json else ""
-            event.state = req.json['state'] if 'state' in req.json else ""
+            event.publicity = req.json['publicity'] if 'publicity' in req.json else 1
+            event.state = req.json['state'] if 'state' in req.json else "PENDING"
             if event.state not in _statuses:
                 return jsonify(message="Invalid status for an event."), 404
-            event.duedate = datetime.datetime.strptime(req.json['duedate'], '%d-%m-%Y') if 'duedate' in req.json else ""
-            if 'responsible_id' in req.json and employeemng.exists(req.json['responsible_id']):
-                event.responsible_id = req.json['responsible_id']
+            event.duedate = datetime.datetime.strptime(req.json['duedate'], '%Y-%m-%d') if 'duedate' in req.json else ""
+            if 'responsible_id' in req.json and employeemng.find_user(req.json['responsible_id']):
+                emp = employeemng.find_user(req.json['responsible_id'])
+                event.responsible_id = emp.emp_id
+                req.json['responsible_id'] = emp.emp_id
             else:
                 return jsonify(message="Responsible not found."), 404
-            event_schema.load(req.json)
             db.session.add(event)
             db.session.commit()
         except (TypeError, ValidationError) as err:
@@ -119,7 +120,7 @@ def update(req):
         return jsonify(Message="Event not found"), 404
 
 
-# DELETE or CANCELLED (when not empty)
+# DELETED or CANCELLED (when not empty)
 def delete(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
