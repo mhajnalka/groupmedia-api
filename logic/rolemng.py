@@ -23,13 +23,13 @@ def add(req):
         return jsonify(message="Event not found."), 404
     if 'username' in req.json and employeemng.find_user(req.json['username']):
         emp = employeemng.find_user(req.json['username'])
-        role.responsible_id = emp.emp_id
+        role.emp_id = str(emp.emp_id)
         req.json['emp_id'] = emp.emp_id
         req.json.pop('username', None)
     else:
         return jsonify(message="Employee not found."), 404
     if 'perm_id' in req.json and Permission.query.filter_by(perm_id=req.json['perm_id']).one_or_none:
-        role.responsible_id = req.json['perm_id']
+        role.perm_id = req.json['perm_id']
     else:
         return jsonify(message="Permission not found."), 404
     try:
