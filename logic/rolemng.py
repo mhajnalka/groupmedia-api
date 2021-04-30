@@ -21,8 +21,11 @@ def add(req):
         role.event_id = req.json['event_id']
     else:
         return jsonify(message="Event not found."), 404
-    if 'emp_id' in req.json and employeemng.exists(req.json['emp_id']):
-        role.responsible_id = req.json['emp_id']
+    if 'username' in req.json and employeemng.find_user(req.json['username']):
+        emp = employeemng.find_user(req.json['username'])
+        role.responsible_id = emp.emp_id
+        req.json['emp_id'] = emp.emp_id
+        req.json.pop('username', None)
     else:
         return jsonify(message="Employee not found."), 404
     if 'perm_id' in req.json and Permission.query.filter_by(perm_id=req.json['perm_id']).one_or_none:
@@ -30,7 +33,6 @@ def add(req):
     else:
         return jsonify(message="Permission not found."), 404
     try:
-        role_schema.load(req.json)
         db.session.add(role)
         db.session.commit()
     except (TypeError, ValidationError) as err:
