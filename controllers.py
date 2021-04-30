@@ -106,6 +106,12 @@ def delete_event(event_id: int):
     return eventmng.delete(event_id)
 
 
+@routes_blueprint.route('/set_finished/<int:event_id>', methods=['PUT'])
+# @jwt_required()
+def set_finished(event_id: int):
+    return eventmng.set_finished(event_id)
+
+
 # #################################################################
 # VERSION REQUESTS
 # #################################################################

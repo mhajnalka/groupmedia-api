@@ -134,9 +134,20 @@ def delete(event_id: int):
         return jsonify(Message="Event not found"), 404
 
 
+# Sets event's state to FINISHED
+def set_finished(event_id: int):
+    event = EventProj.query.filter_by(event_id=event_id).first()
+    if event:
+        event.state = _statuses[3]
+        db.session.commit()
+        return jsonify(Message="Event state has been updated"), 201
+    else:
+        return jsonify(Message="Event not found"), 404
+
 # #################################################################
 # OTHER
 # #################################################################
+
 
 # seeking whether if there's an existing event with the given id
 def exists(event_id: int):
