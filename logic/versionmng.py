@@ -1,6 +1,6 @@
 import datetime
 import os
-from flask import jsonify
+from flask import jsonify, request, send_file
 from marshmallow import ValidationError
 from werkzeug.utils import secure_filename
 from logic import employeemng, eventmng, itemmng, rolemng
@@ -9,7 +9,7 @@ from models import *
 from app import db, app
 
 version_schema = ItemVersionSchema()
-versions_schema = ItemMainSchema(many=True)
+versions_schema = ItemVersionSchema(many=True)
 
 
 # #################################################################
@@ -116,35 +116,6 @@ def add(req):
     return jsonify(message="Item has been created"), 201
 
 
-# handles received files separately from administration
-# in order to be able to manage files, file name has to be the same as defined in the add method
-def process_file(file, name="item", version=1):
-    try:
-        if file and name_chk(file.filename):
-            filename = secure_filename(file.filename)
-            path_exists()
-            new_name = name + str(version) + '.' + filename.rsplit('.', 1)[1].lower()
-            file.save(os.path.join(app.config['UPLOAD_DIR'], new_name))
-        return new_name
-    except:
-        return False
-
-
-# checks filename if it's extension is in the array of the allowed ones
-def name_chk(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['UPLOAD_EXTENSIONS']
-
-
-# checks if the given path exists, creates upload directory if not
-def path_exists(chk_only=False):
-    if not os.path.exists(os.path.join(app.config['UPLOAD_DIR'])):
-        if chk_only:
-            return False
-        else:
-            os.makedirs(os.path.join(app.config['UPLOAD_DIR']))
-    return True
-
-
 # UPDATE
 def update(req):
     if 'item_id' and 'desc' in req.form:
@@ -165,9 +136,17 @@ def update(req):
     return ""
 
 
-# returns the stored file
-def show_file(req):
-    return ""
+# returns the stored file by item_id, so that it can be displayed/downloaded
+def show_file(item_id):
+    version = ItemVersion.query.filter_by(item_id=item_id).first()
+    if path_exists(chk_only=True):
+        try:
+            return send_file(os.path.join(app.config['UPLOAD_DIR'], version.filename),
+                             attachment_filename=version.filename), 200
+        except FileNotFoundError as err:
+            return 'File not found error', 400
+    # os.path.join(app.config['UPLOAD_DIR'], version.filename)
+    return 'Directory does not exist, contact the developer', 400
 
 
 # checks for validation role, unlocks version, so it becomes the last/active version in the system
@@ -226,6 +205,12 @@ def validate(req, set_valid):
     return jsonify(message="Item has been successfully rejected"), 201
 
 
+# receives an item ID which by restores version if the container event is still in WIP status
+def restore(item_id):
+    version = ItemVersion.query.filter_by(item_id=item_id).first()
+    return jsonify(message=""), 200
+
+
 # DELETE
 # cross-reference should be handled here
 # if there's only one single version, main info and stored file versions should be deleted as well
@@ -236,16 +221,48 @@ def delete(item_id: int, reject=False):
         db.session.commit()
         if reject:
             return
-        return jsonify(Message="Version has been deleted"), 202
+        return jsonify(message="Version has been deleted"), 202
     else:
-        return jsonify(Message="An error happened, version not found"), 404
+        return jsonify(message="An error happened, version not found"), 404
 
 
 # #################################################################
 # OTHER
 # #################################################################
 
+# handles received files separately from administration
+# in order to be able to manage files, file name has to be the same as defined in the add method
+def process_file(file, name="item", version=1):
+    try:
+        if file and name_chk(file.filename):
+            filename = secure_filename(file.filename)
+            path_exists()
+            new_name = name + str(version) + '.' + filename.rsplit('.', 1)[1].lower()
+            file.save(os.path.join(app.config['UPLOAD_DIR'], new_name))
+        return new_name
+    except:
+        return False
+
+
+# checks filename if it's extension is in the array of the allowed ones
+def name_chk(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['UPLOAD_EXTENSIONS']
+
+
+# checks if the given path exists, creates upload directory if not
+def path_exists(chk_only=False):
+    if not os.path.exists(os.path.join(app.config['UPLOAD_DIR'])):
+        if chk_only:
+            return False
+        else:
+            os.makedirs(os.path.join(app.config['UPLOAD_DIR']))
+    return True
+
+
+# returns version by ID--
 def get_versions(itemmain_id):
-    version_list = ItemVersion.query.filter_by(itemmain_id=itemmain_id)
-    result = version_list.dump(version_list)
-    return jsonify(result), 200
+    version_list = ItemVersion.query.filter((ItemVersion.itemmain_id == itemmain_id))
+    print(version_list)
+    result = versions_schema.dump(version_list)
+    print(result)
+    return result

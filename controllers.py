@@ -128,10 +128,10 @@ def update_version():
     return versionmng.update(request)
 
 
-@routes_blueprint.route('/show_file', methods=['GET'])
+@routes_blueprint.route('/show_file/<int:item_id>', methods=['POST'])
 # @jwt_required()
-def show_file():
-    return versionmng.show_file(request)
+def show_file(item_id: int):
+    return versionmng.show_file(item_id)
 
 
 @routes_blueprint.route('/validate', methods=['PUT'])
@@ -144,6 +144,12 @@ def validate_version():
 # @jwt_required()
 def reject_version():
     return versionmng.validate(request, False)
+
+
+@routes_blueprint.route('/restore/<int:item_id>', methods=['POST'])
+# @jwt_required()
+def restore(item_id: int):
+    return versionmng.restore(item_id)
 
 
 @routes_blueprint.route('/delete_version/<int:item_id>', methods=['PUT'])
@@ -168,10 +174,10 @@ def get_all_item():
     return itemmng.get_all()
 
 
-@routes_blueprint.route('/get_all_version/<int:itemmain_id>', methods=['GET'])
+@routes_blueprint.route('/get_versions/<name>', methods=['GET'])
 # @jwt_required()
-def get_all_version(itemmain_id: int):
-    return itemmng.get_all_version(itemmain_id)
+def get_versions(name: str):
+    return itemmng.get_all_version(name)
 
 
 # #################################################################

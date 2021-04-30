@@ -2,12 +2,13 @@ from flask import jsonify
 from marshmallow import ValidationError
 
 from logic import versionmng
-from schemas import ItemMainSchema
+from schemas import ItemMainSchema, ItemVersionSchema
 from models import *
 from app import db
 
 item_schema = ItemMainSchema()
 items_schema = ItemMainSchema(many=True)
+versions_schema = ItemVersionSchema(many=True)
 
 
 # #################################################################
@@ -55,11 +56,17 @@ def get_all():
     return jsonify(result), 200
 
 
-# returns a single item by ID
-def get_all_version(itemmain_id: int):
-    item = ItemMain.query.filter_by(itemmain_id=itemmain_id).first()
+# returns all item versions that belong to the same item instance
+def get_all_version(name: str):
+    item = ItemMain.query.filter_by(name=name).first()
     if item:
-        return versionmng.get_versions(itemmain_id)
+        versions = db.session.query(ItemMain.itemmain_id, ItemVersion.item_id, ItemVersion.filename,
+                                    ItemVersion.version, ItemVersion.creadate, ItemVersion.lockstate).\
+            join(ItemVersion).filter_by(itemmain_id=item.itemmain_id).all()
+        print(versions)
+        result = versions_schema.dump(versions)
+        print(result)
+        return jsonify(result), 200
     else:
         return jsonify(message="Item not found"), 404
 
