@@ -63,9 +63,7 @@ def get_all_version(name: str):
         versions = db.session.query(ItemMain.itemmain_id, ItemVersion.item_id, ItemVersion.filename,
                                     ItemVersion.version, ItemVersion.creadate, ItemVersion.lockstate).\
             join(ItemVersion).filter_by(itemmain_id=item.itemmain_id).all()
-        print(versions)
         result = versions_schema.dump(versions)
-        print(result)
         return jsonify(result), 200
     else:
         return jsonify(message="Item not found"), 404

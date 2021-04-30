@@ -33,24 +33,24 @@ def add(req):
         version.islastver = 0
         version.creadate = datetime.datetime.now()
         # checking project and it's state, which must be modifiable
-
-        '''        
         if 'project_id' in req.form and eventmng.exists(req.form['project_id']):
             if eventmng.is_wip(req.form['project_id']):
                 version.project_id = req.form['project_id']
             else:
                 return jsonify(message="An error happened: event with wrong state"), 404
         else:
-            return jsonify(message="An error happened, event not found."), 404'''
+            return jsonify(message="An error happened, event not found."), 404
         # checking creator
         employee = employeemng.find_user(req.form['creator_id'])
         if 'creator_id' in req.form and employee:
             version.creator_id = employee.emp_id
         else:
             return jsonify(message="An error happened, creator not found."), 404
-        '''ROLE CHECK 
+        # checking roles
         if not rolemng.exists(version.creator_id, version.project_id, 2):
-            return jsonify(message="Role not found, permission denied."), 404'''
+
+            print('ERROR HERE II')
+            return jsonify(message="Role not found, permission denied."), 404
         # item is true when it exists with the param of name
         if item:
             try:
@@ -208,12 +208,24 @@ def validate(req, set_valid):
 # receives an item ID which by restores version if the container event is still in WIP status
 def restore(item_id):
     version = ItemVersion.query.filter_by(item_id=item_id).first()
-    return jsonify(message=""), 200
+    if not version:
+        return jsonify(message="Version not found"), 404
+    if not eventmng.is_wip(version.project_id):
+        return jsonify(message="Version cannot be restored within a non WIP state event"), 400
+
+    version_list = \
+        ItemVersion.query.filter((ItemVersion.itemmain_id == version.itemmain_id)
+                                 & (ItemVersion.version > version.version))
+    bigger_versions = versions_schema.dump(version_list)
+    for v in bigger_versions:
+        bv = ItemVersion.query.filter_by(item_id=v['item_id']).first()
+        db.session.delete(bv)
+    version.islastver = 1
+    db.session.commit()
+    return jsonify(message="Version has been restored"), 200
 
 
-# DELETE
-# cross-reference should be handled here
-# if there's only one single version, main info and stored file versions should be deleted as well
+# DELETE function
 def delete(item_id: int, reject=False):
     version = ItemVersion.query.filter_by(item_id=item_id).first()
     if version:
