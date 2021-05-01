@@ -57,13 +57,41 @@ def upload(item_data: str, uploader_data: str):
 
 
 # to notify the uploader that the uploaded item has been validated
-def item_validate(item_id: int):
-    print(item_id)
+def item_validate(uploader_mail: str, item_data: str):
+    send = \
+        send_notification(recipient=uploader_mail,
+                          subject='Validation notification',
+                          mail_body=f'''
+
+                                            Your uploaded item has been validated:
+
+                                            {item_data}
+
+                                            {constmng.get_company(comp_id=1,
+                                                                  repr_only=True)}
+                                            ''')
+    if not send:
+        return False
+    return True
 
 
 # to notify the uploader that the uploaded item has been rejected
-def item_reject(item_id: int):
-    print(item_id)
+def item_reject(uploader_mail: str, item_data: str):
+    send = \
+        send_notification(recipient=uploader_mail,
+                          subject='Rejection notification',
+                          mail_body=f'''
+
+                                            Your uploaded item has been rejected:
+
+                                            {item_data}
+
+                                            {constmng.get_company(comp_id=1,
+                                                                  repr_only=True)}
+                                            ''')
+    if not send:
+        return False
+    return True
 
 
 # to notify validators and other employees that an event has been cancelled
