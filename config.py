@@ -16,5 +16,5 @@ class Config:
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USE_SSL = True
-    MAIL_USERNAME = os.environ['groupmediaapp@gmail.com']
-    MAIL_PASSWORD = os.environ['Pw123456']
+    MAIL_USERNAME = 'groupmediaapp@gmail.com'
+    MAIL_PASSWORD = 'Pw123456'
