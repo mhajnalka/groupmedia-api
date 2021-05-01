@@ -3,7 +3,7 @@ import os
 from flask import jsonify, request, send_file
 from marshmallow import ValidationError
 from werkzeug.utils import secure_filename
-from logic import employeemng, eventmng, itemmng, rolemng
+from logic import employeemng, eventmng, itemmng, rolemng, mailsender
 from schemas import ItemMainSchema, ItemVersionSchema
 from models import *
 from app import db, app
@@ -78,6 +78,8 @@ def add(req):
                 db.session.add(item)
                 db.session.add(version)
                 db.session.commit()
+                mailsender.upload(item_data=repr(item)+repr(version),
+                                  uploader_data=repr(employee))
             except (TypeError, ValidationError) as err:
                 return jsonify(message=list(eval(str(err)).values())[0][0]), 401
             except ValueError as err:
@@ -105,6 +107,8 @@ def add(req):
                                                 version=version.version)
                 db.session.add(version)
                 db.session.commit()
+                mailsender.upload(item_data=repr(new_item) + repr(version),
+                                  uploader_data=repr(employee))
             except (TypeError, ValidationError) as err:
                 return jsonify(message=list(eval(str(err)).values())[0][0]), 401
             except ValueError as err:

@@ -28,6 +28,7 @@ def send_notification(recipient: str, subject: str, mail_body: str):
         return True
     except SMTPException as err:
         print(err)
+        print('THIS: ' + recipient + " " + subject + " " + mail_body)
         return False
 
 
@@ -39,7 +40,9 @@ def upload(item_data: str, uploader_data: str):
             send_notification(recipient=email,
                               subject='Upload notification',
                               mail_body=f'''
+                                        
                                         A new version has been uploaded to the system:
+                                        
                                         {item_data}
                                         
                                         Uploader:
@@ -64,8 +67,24 @@ def item_reject(item_id: int):
 
 
 # to notify validators and other employees that an event has been cancelled
-def event_cancel(event_id):
-    print()
+def event_cancel(event_data):
+    mail_list = employeemng.validator_mail_list()
+    for email in mail_list:
+        send = \
+            send_notification(recipient=email,
+                              subject='Event cancellation notification',
+                              mail_body=f'''
+
+                                        An event has been cancelled:
+
+                                        {event_data}
+
+                                        {constmng.get_company(comp_id=1,
+                                                              repr_only=True)}
+                                        ''')
+        if not send:
+            return False
+    return True
 
 
 # to notify validators that an event has been finished with the list of items that belong to the finished event
