@@ -187,7 +187,7 @@ def exists(emp_id: int):
         return False
 
 
-# returns a single employee by ID
+# returns a single employee by username
 def find_user(username: str):
     employee = Employee.query.filter_by(username=username).first()
     if employee:
@@ -195,6 +195,14 @@ def find_user(username: str):
     else:
         return
 
+
+# returns a single employee by ID
+def find_user_id(emp_id: str):
+    employee = Employee.query.filter_by(emp_id=emp_id).first()
+    if employee:
+        return employee
+    else:
+        return
 
 # returns the list of all the list of all the e-mail addresses of the validator employees
 def validator_mail_list():

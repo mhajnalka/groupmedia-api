@@ -201,11 +201,17 @@ def validate(req, set_valid):
         version.lockstate = 0
         version.rejected = 0
         db.session.commit()
+        creator = employeemng.find_user_id(version.creator_id)
+        mailsender.item_validate(uploader_mail=creator.email,
+                                 item_data=repr(version))
         return jsonify(message="Item has been validated successfully"), 201
     version.rejected = 1
     delete(item_id=version.item_id,
            reject=True)
     db.session.commit()
+    creator = employeemng.find_user_id(version.creator_id)
+    mailsender.item_reject(uploader_mail=creator.email,
+                           item_data=repr(version))
     return jsonify(message="Item has been successfully rejected"), 201
 
 
