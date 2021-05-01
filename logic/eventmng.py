@@ -1,7 +1,7 @@
 import datetime
 from flask import jsonify
 from marshmallow import ValidationError
-from logic import employeemng
+from logic import employeemng, mailsender
 from schemas import EventProjSchema
 from models import EventProj, ItemVersion
 from app import db
@@ -121,15 +121,16 @@ def update(req):
 
 
 # DELETED or CANCELLED (when not empty)
-def delete(event_id: int):
+async def delete(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
         if ItemVersion.query.filter_by(project_id=event_id).first:
             event.state = _statuses[4]
+            mailsender.event_cancel(repr(event))
         else:
             db.session.delete(event)
         db.session.commit()
-        return jsonify(Message="Event has beeen deleted"), 202
+        return jsonify(Message="Event has been cancelled/deleted"), 202
     else:
         return jsonify(Message="Event not found"), 404
 
@@ -139,6 +140,10 @@ def set_finished(event_id: int):
     event = EventProj.query.filter_by(event_id=event_id).first()
     if event:
         event.state = _statuses[3]
+        event_data = repr(event) + " "
+        for e in event.ref_items:
+            event_data += repr(e)
+        mailsender.event_finish(repr(event))
         db.session.commit()
         return jsonify(Message="Event state has been updated"), 201
     else:

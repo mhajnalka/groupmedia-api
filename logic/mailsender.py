@@ -67,7 +67,7 @@ def item_reject(item_id: int):
 
 
 # to notify validators and other employees that an event has been cancelled
-def event_cancel(event_data):
+def event_cancel(event_data: str):
     mail_list = employeemng.validator_mail_list()
     for email in mail_list:
         send = \
@@ -87,6 +87,22 @@ def event_cancel(event_data):
     return True
 
 
-# to notify validators that an event has been finished with the list of items that belong to the finished event
-def event_finish():
-    print()
+# to notify validators that an event has been finished
+def event_finish(event_data):
+    mail_list = employeemng.validator_mail_list()
+    for email in mail_list:
+        send = \
+            send_notification(recipient=email,
+                              subject='Event closure notification',
+                              mail_body=f'''
+
+                                        An event has been finished:
+
+                                        {event_data}
+
+                                        {constmng.get_company(comp_id=1,
+                                                              repr_only=True)}
+                                        ''')
+        if not send:
+            return False
+    return True
