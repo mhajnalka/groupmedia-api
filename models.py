@@ -22,6 +22,15 @@ class Employee(db.Model):
     ref_responsibleof = db.relationship('EventProj', backref='responsible')
     ref_roles = db.relationship('Role', backref='emp')
 
+    # will return the string representation of an employee instance
+    def __repr__(self):
+        return f'''
+                Username            : {self.username}
+                Name                : {self.firstname} {self.lastname}
+                Email               : {self.email}
+                Phone               : {self.phone}
+                '''
+
 
 class ItemMain(db.Model):
     __tablename__ = 'itemmain'
@@ -31,6 +40,15 @@ class ItemMain(db.Model):
     extension = Column(db.String(4))
     type = Column(db.String(4))
     ref_versions = db.relationship('ItemVersion', backref='itemmain')
+
+    # will return the string representation of a main item instance
+    def __repr__(self):
+        return f'''
+                Name                : {self.name}
+                Description         : {self.desc} 
+                Extension           : {self.extension}
+                Type                : {self.type}
+                '''
 
 
 class ItemVersion(db.Model):
@@ -46,6 +64,15 @@ class ItemVersion(db.Model):
     itemmain_id = db.Column(db.Integer, db.ForeignKey('itemmain.itemmain_id'))
     creator_id = db.Column(db.Integer, db.ForeignKey('employee.emp_id'))
     project_id = db.Column(db.Integer, db.ForeignKey('eventproj.event_id'))
+
+    # will return the string representation of a version instance
+    def __repr__(self):
+        return f'''
+                Filename            : {self.filename}
+                Version             : {self.version}.0
+                Description         : {self.desc}
+                Date of creation    : {self.creadate}
+                '''
 
 
 class Role(db.Model):  # N:
@@ -75,6 +102,17 @@ class EventProj(db.Model):
     ref_items = db.relationship('ItemVersion', backref='project')
     ref_roles = db.relationship('Role', backref='event')
 
+    # will return the string representation of an event instance
+    def __repr__(self):
+        return f'''
+                Identifier of event : {self.event_id}
+                Name                : {self.name}
+                Description         : {self.desc}
+                Publicity           : {self.publicity}
+                State               : {self.state}
+                Due date            : {self.duedate}
+                '''
+
 
 class Company(db.Model):
     __tablename__ = 'company'
@@ -89,3 +127,15 @@ class Company(db.Model):
     region = Column(db.String(50))
     postcode = Column(db.String(4))
     country = Column(db.String(50))
+
+    # will return the string representation of a company instance
+    def __repr__(self):
+        return f'''
+                _______________________________________________________________
+                _______________________________________________________________
+                {self.name}
+                Phone         : {self.phone}
+                Fax           : {self.fax}
+                Web           : {self.web}
+                Address       : {self.postcode} {self.city}, {self.address}
+                '''
