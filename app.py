@@ -2,18 +2,19 @@ from flask import Flask
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
+from flask_mail import Mail
+import initdata
 
 app = Flask(__name__)
 app.config.from_object('config.Config')
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
+mail = Mail(app)
 
 from controllers import routes_blueprint
 app.register_blueprint(routes_blueprint)
 CORS(app)
-
-import initdata
 
 
 @app.cli.command('db_create')

@@ -11,3 +11,10 @@ class Config:
     JWT_EXPIRATION_DELTA = datetime.timedelta(days=1)
     UPLOAD_DIR = '\\files'
     UPLOAD_EXTENSIONS = {'txt', 'pdf', 'jpg', 'jpeg', 'png'}
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = os.environ['groupmediaapp@gmail.com']
+    MAIL_PASSWORD = os.environ['Pw123456']
