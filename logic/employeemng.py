@@ -198,3 +198,13 @@ def find_user(username: str):
         return employee
     else:
         return
+
+
+# returns the list of all the list of all the e-mail addresses of the validator employees
+def validator_mail_list():
+    validator_list = Employee.query.filter(Employee.create == 1)
+    validators = employees_schema.dump(validator_list)
+    mail_list = list()
+    for validator in validators:
+        mail_list.append(validator['email'])
+    return mail_list
