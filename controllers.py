@@ -204,7 +204,7 @@ def add_role():
 @routes_blueprint.route('/get_contact', methods=['GET'])
 @jwt_required()
 def get_contact():
-    return constmng.get_one(1)
+    return constmng.get_company(1)
 
 
 @routes_blueprint.route('/test_mail', methods=['GET'])
