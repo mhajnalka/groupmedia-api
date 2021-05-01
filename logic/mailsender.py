@@ -5,6 +5,9 @@ from flask_mail import Message
 
 
 # test function for testing flask_mail setup configurations
+from logic import employeemng, constmng
+
+
 def test_mail():
     msg = Message(subject="GROUP MEDIA TEST MAIL",
                   sender=app.config['MAIL_USERNAME'],
@@ -29,8 +32,25 @@ def send_notification(recipient: str, subject: str, mail_body: str):
 
 
 # to notify validators on an uploaded item
-def upload(item_id: int):
-    print(item_id)
+def upload(item_data: str, uploader_data: str):
+    mail_list = employeemng.validator_mail_list()
+    for email in mail_list:
+        send =\
+            send_notification(recipient=email,
+                              subject='Upload notification',
+                              mail_body=f'''
+                                        A new version has been uploaded to the system:
+                                        {item_data}
+                                        
+                                        Uploader:
+                                        {uploader_data}
+                                        
+                                        {constmng.get_company(comp_id=1,
+                                                              repr_only=True)}
+                                        ''')
+        if not send:
+            return False
+    return True
 
 
 # to notify the uploader that the uploaded item has been validated
