@@ -2,7 +2,7 @@ from flask import request, jsonify, Blueprint
 
 from app import db, jwt
 from flask_jwt_extended import jwt_required, create_access_token
-from logic import employeemng, eventmng, versionmng, itemmng, constmng, rolemng, mailsender
+from logic import employeemng, eventmng, versionmng, itemmng, companymng, rolemng, mailsender
 
 routes_blueprint = Blueprint('routes', __name__)
 
@@ -204,7 +204,7 @@ def add_role():
 @routes_blueprint.route('/get_contact', methods=['GET'])
 @jwt_required()
 def get_contact():
-    return constmng.get_company(1)
+    return companymng.get_company(1)
 
 
 @routes_blueprint.route('/test_mail', methods=['GET'])
