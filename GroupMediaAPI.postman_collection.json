@@ -1,0 +1,741 @@
+{
+	"info": {
+		"_postman_id": "ab466e6e-2495-4ca8-8a28-8311131d0c38",
+		"name": "GroupMediaAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add employee",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDMxNjQxNSwianRpIjoiNmY4OGYwOWYtZjUxMy00Mzc2LThiZjgtMmRjYjQ1YTVmNTQwIiwibmJmIjoxNjIwMzE2NDE1LCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdHZhbGlkYXRvciIsImV4cCI6MTYyMDMxNzMxNX0.tWJGDpm4KUoez0trXe8TqFuvpMH96Gb4VQXl0lbgYmc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"address\": \"Bécsi út 8.\",\r\n    \"city\": \"Budapest\",\r\n    \"country\": \"Magyarország\",\r\n    \"email\": \"kovacskornelia@gmail.com\",\r\n    \"fax\": \"061223344\",\r\n    \"firstname\": \"Kornélia\",\r\n    \"lastname\": \"Kovács\",\r\n    \"password\": \"Pass123\",\r\n    \"phone\": \"06306667000\",\r\n    \"postcode\": \"1034\",\r\n    \"region\": \"Bács-Kiskun megye\",\r\n    \"username\": \"kovacskornelia\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add_employee",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add_employee"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add event",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDMxNjQxNSwianRpIjoiNmY4OGYwOWYtZjUxMy00Mzc2LThiZjgtMmRjYjQ1YTVmNTQwIiwibmJmIjoxNjIwMzE2NDE1LCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdHZhbGlkYXRvciIsImV4cCI6MTYyMDMxNzMxNX0.tWJGDpm4KUoez0trXe8TqFuvpMH96Gb4VQXl0lbgYmc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Test Project XI.\",\r\n    \"desc\": \"This is the description of my eleventh test project\",\r\n    \"publicity\": 1,\r\n    \"state\": \"INPROGRESS\",\r\n    \"duedate\": \"2021-05-30\",\r\n    \"responsible_id\": \"kovacskornel\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add_event",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add_event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "MAIL TEST",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/test_mail",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"test_mail"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"testvalidator\",\r\n    \"password\": \"Pass123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": null,
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Employee list",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDMxNDAwNSwianRpIjoiMGE4N2E3MTQtNjAwYy00YTIyLTkwMjMtNzc1MTcxNmY2OTA3IiwibmJmIjoxNjIwMzE0MDA1LCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoia292YWNza29ybmVsIiwiZXhwIjoxNjIwMzE0OTA1fQ.zjxF3Qqab-Pg6I3SErqKwTVkLjBAVykToBV4HoOKF7s",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get_all_employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_all_employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetVersion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDMxNjQxNSwianRpIjoiNmY4OGYwOWYtZjUxMy00Mzc2LThiZjgtMmRjYjQ1YTVmNTQwIiwibmJmIjoxNjIwMzE2NDE1LCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdHZhbGlkYXRvciIsImV4cCI6MTYyMDMxNzMxNX0.tWJGDpm4KUoez0trXe8TqFuvpMH96Gb4VQXl0lbgYmc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get_versions/kokoko",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_versions",
+						"kokoko"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyMDMxNjQxNSwianRpIjoiNmY4OGYwOWYtZjUxMy00Mzc2LThiZjgtMmRjYjQ1YTVmNTQwIiwibmJmIjoxNjIwMzE2NDE1LCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdHZhbGlkYXRvciIsImV4cCI6MTYyMDMxNzMxNX0.tWJGDpm4KUoez0trXe8TqFuvpMH96Gb4VQXl0lbgYmc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get_profile/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_profile",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetEvents",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/delete_event/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delete_event",
+						"2"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteEvent",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/delete_event/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"delete_event",
+						"2"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SetFinished",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/set_finished/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"set_finished",
+						"2"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ShowFile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/show_file/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"show_file",
+						"1"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RestoreVersion",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/restore/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"restore",
+						"1"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"itemname\": \"testitem\",\r\n    \"username\": \"testvalidator\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"validate"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "testuser",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "1111",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reject",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"itemname\": \"testitem\",\r\n    \"username\": \"testvalidator\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/reject",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"reject"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ItemInfo",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"itemname\": \"testitem\",\r\n    \"username\": \"testvalidator\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/get_item/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_item",
+						"1"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetAllItem",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"itemname\": \"testitem\",\r\n    \"username\": \"testvalidator\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/get_all_item",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_all_item"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Role Add",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"event_id\": 2,\r\n    \"perm_id\" : 2,\r\n    \"username\": \"testuser\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/add_role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"add_role"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetContact",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYxNjM1OTA2MiwianRpIjoiNzgyYzMwYjktZTRlYS00MjdkLTgyNDMtZDRkY2QxNGU3ZTczIiwibmJmIjoxNjE2MzU5MDYyLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzenQiLCJleHAiOjE2MTYzNTk5NjJ9.akCLn2gdXkV039zIcSTRoiyI503EhA_dYMNYz5YvZxA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/get_contact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"get_contact"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
